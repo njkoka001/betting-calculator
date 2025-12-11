@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="ngrok-skip-browser-warning" content="any-value">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Convert odds and calculate implied probabilities instantly. Supports Decimal, Fractional, and Moneyline odds formats.">
+    <base href="/betting-calculator/">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='80' fill='white' font-weight='bold'>⚡</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='80' fill='white' font-weight='bold'>⚡</text></svg>">
+    <title>Betting Calculator - Odds Converter & Implied Probability</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sports-decoration">
+            <span class="sport-ball">🏀</span>
+            <span class="sport-ball">⚽</span>
+            <span class="sport-ball">🏈</span>
+            <span class="sport-ball">🎾</span>
+            <span class="sport-ball">🏒</span>
+            <span class="sport-ball">⚾</span>
+        </div>
+        <header>
+            <h1>⚡ Betting Calculator</h1>
+            <p>Convert odds and calculate implied probabilities instantly</p>
+        </header>
+
+        <main>
+            <!-- Odds Converter Section -->
+            <section class="calculator-section">
+                <h2>Odds Converter</h2>
+                <div class="input-group">
+                    <label for="oddsInput">Enter Odds:</label>
+                    <input 
+                        type="number" 
+                        id="oddsInput" 
+                        placeholder="e.g., 2.5 or -110" 
+                        step="0.01"
+                    >
+                    <select id="oddsFormat">
+                        <option value="decimal">Decimal</option>
+                        <option value="fractional">Fractional</option>
+                        <option value="moneyline">Moneyline</option>
+                    </select>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-box">
+                        <label>Decimal Odds</label>
+                        <p id="decimalResult">-</p>
+                    </div>
+                    <div class="result-box">
+                        <label>Fractional Odds</label>
+                        <p id="fractionalResult">-</p>
+                    </div>
+                    <div class="result-box">
+                        <label>Moneyline</label>
+                        <p id="moneylineResult">-</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="convertBtn">Convert Odds</button>
+            </section>
+
+            <!-- Implied Probability Section -->
+            <section class="calculator-section">
+                <h2>Implied Probability Calculator</h2>
+                <div class="input-group">
+                    <label for="probOdds">Enter Odds:</label>
+                    <input 
+                        type="number" 
+                        id="probOdds" 
+                        placeholder="e.g., 2.5" 
+                        step="0.01"
+                    >
+                    <select id="probFormat">
+                        <option value="decimal">Decimal</option>
+                        <option value="fractional">Fractional</option>
+                        <option value="moneyline">Moneyline</option>
+                    </select>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-box">
+                        <label>Implied Probability</label>
+                        <p id="probabilityResult">-</p>
+                    </div>
+                    <div class="result-box">
+                        <label>Winning Chance</label>
+                        <p id="winChanceResult">-</p>
+                    </div>
+                </div>
+
+                <div class="probability-bar">
+                    <div id="probabilityBar" class="bar-fill"></div>
+                </div>
+
+                <button class="btn btn-primary" id="calculateProbBtn">Calculate Probability</button>
+            </section>
+
+            <!-- Bet Calculator Section -->
+            <section class="calculator-section">
+                <h2>Bet Calculator</h2>
+                <div class="input-group">
+                    <label for="stakeInput">Stake Amount (KSH):</label>
+                    <input 
+                        type="number" 
+                        id="stakeInput" 
+                        placeholder="e.g., 100" 
+                        step="0.01"
+                        min="0"
+                    >
+                    <label for="betOdds">Odds:</label>
+                    <input 
+                        type="number" 
+                        id="betOdds" 
+                        placeholder="e.g., 2.5" 
+                        step="0.01"
+                    >
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-box">
+                        <label>Potential Payout</label>
+                        <p id="payoutResult">-</p>
+                    </div>
+                    <div class="result-box">
+                        <label>Profit</label>
+                        <p id="profitResult">-</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="calculateBetBtn">Calculate Returns</button>
+            </section>
+
+            <!-- Clear All Button -->
+            <button class="btn btn-secondary" id="clearAllBtn">Clear All</button>
+        </main>
+
+        <footer>
+            <p>Betting Calculator © 2025 | Disclaimer: For educational purposes only</p>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Register Service Worker for offline functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/betting-calculator/js/service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
