@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Upload, Eye, CheckCircle2, AlertCircle, ArrowRight, Image as ImageIcon } from 'lucide-react'
 import { extractViewsFromText } from '@/lib/ocr'
 
-export default function SubmitProofPage() {
+function SubmitProofContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const campaignId = searchParams.get('campaignId')
@@ -178,5 +178,13 @@ export default function SubmitProofPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SubmitProofPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-white">Loading proof submission form...</div>}>
+      <SubmitProofContent />
+    </Suspense>
   )
 }

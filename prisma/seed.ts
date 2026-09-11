@@ -50,14 +50,14 @@ async function main() {
   const userPassword = await bcrypt.hash('user123', 10)
 
   const admin = await prisma.user.upsert({
-    where: { phone: '0700000000' },
+    where: { phone: '0734570672' },
     update: {},
     create: {
-      fullName: 'System Administrator',
-      phone: '0700000000',
-      whatsappNumber: '254700000000',
+      fullName: 'Trendmark Master Administrator',
+      phone: '0734570672',
+      whatsappNumber: '254734570672',
       email: 'admin@trendmark.co.ke',
-      mpesaNumber: '254700000000',
+      mpesaNumber: '254734570672',
       passwordHash: adminPassword,
       role: 'ADMIN',
       profileComplete: true,

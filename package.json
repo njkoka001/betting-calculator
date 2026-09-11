@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node build.js",
-    "deploy": "node build.js && git add . && git commit -m \"Deploy update to Vercel\" && git push origin main",
+    "build": "prisma generate && next build",
+    "deploy": "git add . && git commit -m \"Deploy update\" && git push origin main",
+    "build:static": "node build.js",
     "build:next": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:seed": "prisma db push && tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.0.3",
+    "@netlify/functions": "^6.0.0",
     "@prisma/client": "^5.19.1",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
