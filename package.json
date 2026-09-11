@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "node build.js",
+    "deploy": "node build.js && git add . && git commit -m \"Deploy update to Vercel\" && git push origin main",
     "build:next": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
