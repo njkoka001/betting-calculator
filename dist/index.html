@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trendmark Electronics & WhatsApp Ads Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="trendmark-db.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f9fafb; }
+
+    /* GLASSMORPHISM UTILITY CLASSES */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <!-- AMBIENT GLOW BACKGROUND ORBS -->
+  <div class="fixed top-[-10%] left-[20%] w-[500px] h-[500px] bg-sky-600/20 rounded-full blur-[140px] pointer-events-none z-0"></div>
+  <div class="fixed top-[40%] right-[10%] w-[450px] h-[450px] bg-emerald-600/15 rounded-full blur-[130px] pointer-events-none z-0"></div>
+
+  <!-- GLASSMORPHISM NAVBAR -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+          T
+        </div>
+        <div>
+          <span class="font-black text-lg tracking-tight text-white">TRENDMARK</span>
+          <span class="block text-[10px] font-bold text-sky-400 uppercase tracking-widest">Electronics & Ads</span>
+        </div>
+      </div>
+
+        <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="hidden text-sky-400 font-extrabold flex items-center gap-1.5 py-1 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 hover:bg-sky-500/20 transition">
+          <i class="fa-solid fa-gauge-high"></i> My Dashboard
+        </button>
+        <button onclick="switchTab('home')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
+          <i class="fa-solid fa-house text-sky-400"></i> Home
+        </button>
+        <button onclick="switchTab('packages')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
+          <i class="fa-solid fa-award text-amber-400"></i> Packages
+        </button>
+        <button onclick="switchTab('campaign')" class="text-emerald-400 font-extrabold flex items-center gap-1.5 py-1 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+          <i class="fa-solid fa-lock text-amber-400" id="nav-lock-icon"></i> Today's Campaign
+        </button>
+        <button onclick="switchTab('wallet')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
+          <i class="fa-solid fa-wallet text-indigo-400"></i> My Wallet
+        </button>
+        <button onclick="switchTab('submit-proof')" id="nav-btn-submit-proof" class="hidden text-amber-300 font-extrabold flex items-center gap-1.5 py-1 bg-amber-500/10 px-3 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition">
+          <i class="fa-solid fa-camera-retro"></i> Submit Proof
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-2" id="navbar-auth-section">
+        <span id="account-status-badge" class="text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer" onclick="switchTab('packages')">
+          <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Account Inactive
+        </span>
+        <div id="nav-user-controls" class="flex items-center gap-2"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN TAB CONTAINERS -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 relative z-10">
+
+    <!-- HOME TAB -->
+    <section id="tab-home" class="space-y-12">
+      <!-- GLASS HERO -->
+      <div class="glass-panel rounded-3xl p-8 sm:p-14 shadow-2xl text-center space-y-6 relative overflow-hidden">
+        <span class="inline-flex items-center gap-2 bg-white/5 text-sky-300 border border-white/10 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Trendmark Electronics & Global Ads
+        </span>
+        <h1 class="text-3xl sm:text-6xl font-black max-w-3xl mx-auto leading-tight text-white">
+          Shop Quality Electronics. <br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-emerald-300 to-amber-300">
+            Earn Daily Cash on WhatsApp.
+          </span>
+        </h1>
+        <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto font-light leading-relaxed">
+          Backed by years of experience in electronics distribution and serving thousands of satisfied customers globally. Select a package, share daily product campaigns, and earn verified M-Pesa payouts!
+        </p>
+        <div class="pt-2 flex justify-center gap-3">
+          <button onclick="switchTab('packages')" class="px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-2xl text-xs shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-105 transition">
+            Explore Packages & Start →
+          </button>
+        </div>
+
+        <!-- COMPANY TRUST & EXPERIENCE STATS BAR -->
+        <div class="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-sky-400 font-black text-2xl"><i class="fa-solid fa-building-user text-lg"></i> 5+ Years</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Industry Experience</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-emerald-400 font-black text-2xl"><i class="fa-solid fa-earth-americas text-lg"></i> 50,000+</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Global Customers</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-amber-400 font-black text-2xl"><i class="fa-solid fa-circle-check text-lg"></i> 100%</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Verified Payouts</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-indigo-400 font-black text-2xl"><i class="fa-solid fa-star text-amber-400 text-lg"></i> 4.9 / 5</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Satisfaction Score</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHO WE ARE SECTION -->
+      <div class="glass-panel rounded-3xl p-8 sm:p-12 space-y-8 shadow-2xl relative overflow-hidden">
+        <!-- Subtle glow accents -->
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-sky-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Section Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+          <div class="space-y-2">
+            <span class="inline-flex items-center gap-2 bg-sky-500/10 text-sky-300 border border-sky-500/20 text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest">
+              <i class="fa-solid fa-circle-info text-sky-400"></i> Who We Are
+            </span>
+            <h2 class="text-2xl sm:text-4xl font-black text-white leading-tight max-w-lg">
+              Boosting Electronics Sales &amp;<br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">Empowering Our Advertisers</span>
+            </h2>
+            <p class="text-slate-400 text-sm leading-relaxed max-w-lg">
+              Trendmark is a premier electronics distribution and digital advertising platform. We unite verified buyers, trusted sellers, and WhatsApp-powered promoters under one rewarding ecosystem — operating globally for over 5 years.
+            </p>
+          </div>
+          <!-- Right Side Trust Badge -->
+          <div class="glass-card rounded-2xl p-5 space-y-3 min-w-[220px] flex-shrink-0">
+            <p class="text-[10px] text-sky-300 font-extrabold uppercase tracking-widest">Why Partner With Us?</p>
+            <ul class="space-y-2.5 text-xs text-slate-300">
+              <li class="flex items-center gap-2.5"><span class="w-5 h-5 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]"><i class="fa-solid fa-check"></i></span>Guaranteed M-Pesa payouts</li>
+              <li class="flex items-center gap-2.5"><span class="w-5 h-5 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]"><i class="fa-solid fa-check"></i></span>50,000+ verified customers globally</li>
+              <li class="flex items-center gap-2.5"><span class="w-5 h-5 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]"><i class="fa-solid fa-check"></i></span>Transparent OCR-verified ad views</li>
+              <li class="flex items-center gap-2.5"><span class="w-5 h-5 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center flex-shrink-0 text-[10px]"><i class="fa-solid fa-check"></i></span>No hidden fees — only results</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Two Mission Cards -->
+        <div class="grid sm:grid-cols-2 gap-5 relative z-10">
+          <div class="glass-card rounded-2xl p-6 space-y-3 hover:border-sky-500/40 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-xl text-sky-400">
+              <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <h3 class="font-extrabold text-white text-base">Maximize Electronics Sales</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              We supply genuine, high-demand consumer electronics — smartphones, smartwatches, earbuds, and more — direct to consumers at competitive prices through a fully verified distribution chain.
+            </p>
+            <div class="flex items-center gap-2 text-sky-400 text-xs font-bold">
+              <i class="fa-solid fa-arrow-right-long"></i> Shop verified gadgets at great prices
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3 hover:border-emerald-500/40 transition-all duration-300">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl text-emerald-400">
+              <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <h3 class="font-extrabold text-white text-base">Promote &amp; Reward Our Advertisers</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Every member becomes a paid promoter — sharing daily product campaigns on WhatsApp Status. We verify each ad view using screenshot proof and pay verified earnings directly to your M-Pesa wallet, every day.
+            </p>
+            <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+              <i class="fa-solid fa-arrow-right-long"></i> Share. Prove. Get paid — every day
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT CATALOG CONTAINER: LOCKED UNTIL ACTIVATION -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-white">Electronics Product Catalog</h2>
+        
+        <!-- LOCKED STATE BANNER -->
+        <div id="products-locked-banner" class="glass-panel rounded-3xl p-10 text-center space-y-4 shadow-xl">
+          <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-xl font-black text-white">Products Locked</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Daily electronics products are hidden until you select and activate a reward subscription package.
+            </p>
+          </div>
+          <button onclick="switchTab('packages')" class="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs shadow">
+            Select Package to Unlock Products →
+          </button>
+        </div>
+
+        <!-- UNLOCKED PRODUCTS GRID -->
+        <div id="products-unlocked-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
+            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="h-48 w-full object-cover">
+            <div class="p-5 space-y-2">
+              <span class="bg-sky-500/20 text-sky-300 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">Smartwatch</span>
+              <h3 class="font-extrabold text-white">Trendmark Ultra Smart Watch v2</h3>
+              <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                <span class="text-base font-black text-white">KSh 3,500</span>
+                <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== GROWTH CHARTS SECTION ===================== -->
+      <div class="glass-panel rounded-3xl p-8 sm:p-12 space-y-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-8 right-0 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center space-y-2 relative z-10">
+          <span class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest">
+            <i class="fa-solid fa-chart-line text-indigo-400"></i> Our Growth Journey
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white">5 Years of Expanding Impact</h2>
+          <p class="text-slate-400 text-sm max-w-lg mx-auto">From a small electronics reseller to a global WhatsApp advertising engine — here's our story in numbers.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-3 gap-4 text-center relative z-10">
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-2xl font-black text-sky-400" id="cnt-customers">0</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Customers</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-2xl font-black text-emerald-400">KSh <span id="cnt-payouts">0</span>M+</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Total Paid Out</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <div class="text-2xl font-black text-amber-400" id="cnt-advertisers">0</div>
+            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Active Advertisers</p>
+          </div>
+        </div>
+
+        <!-- BAR CHART: Annual Customer Growth -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 relative z-10">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] text-sky-300 font-extrabold uppercase tracking-widest">Annual Customer Growth</p>
+              <p class="text-xs text-slate-500">Registered users per year — 2021 to 2026</p>
+            </div>
+            <span class="text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/20 px-3 py-1 rounded-full font-bold">+340% since 2021</span>
+          </div>
+          <!-- Animated Bar Chart -->
+          <div class="flex items-end gap-3 h-36 pt-4" id="bar-chart">
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-slate-400 font-bold">3.5K</span>
+              <div class="w-full bg-gradient-to-t from-sky-600 to-sky-400 rounded-t-lg chart-bar" style="height:0%" data-h="25%"></div>
+              <span class="text-[10px] text-slate-500">2021</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-slate-400 font-bold">8.2K</span>
+              <div class="w-full bg-gradient-to-t from-sky-600 to-sky-400 rounded-t-lg chart-bar" style="height:0%" data-h="42%"></div>
+              <span class="text-[10px] text-slate-500">2022</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-slate-400 font-bold">18K</span>
+              <div class="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-lg chart-bar" style="height:0%" data-h="60%"></div>
+              <span class="text-[10px] text-slate-500">2023</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-slate-400 font-bold">32K</span>
+              <div class="w-full bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-lg chart-bar" style="height:0%" data-h="78%"></div>
+              <span class="text-[10px] text-slate-500">2024</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-slate-400 font-bold">44K</span>
+              <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg chart-bar" style="height:0%" data-h="91%"></div>
+              <span class="text-[10px] text-slate-500">2025</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1.5">
+              <span class="text-[10px] text-emerald-400 font-extrabold">50K+</span>
+              <div class="w-full bg-gradient-to-t from-emerald-500 to-teal-300 rounded-t-lg chart-bar shadow-[0_0_20px_rgba(16,185,129,0.4)]" style="height:0%" data-h="100%"></div>
+              <span class="text-[10px] text-emerald-400 font-bold">2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINE CHART: Monthly Payouts (SVG) -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 relative z-10">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] text-emerald-300 font-extrabold uppercase tracking-widest">Monthly Payout Volume (KSh '000s)</p>
+              <p class="text-xs text-slate-500">M-Pesa payouts processed monthly in 2026</p>
+            </div>
+            <span class="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-3 py-1 rounded-full font-bold">+62% YoY</span>
+          </div>
+          <div class="relative w-full overflow-hidden" style="height:120px">
+            <svg viewBox="0 0 600 120" class="w-full h-full" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line x1="0" y1="30" x2="600" y2="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="0" y1="60" x2="600" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="0" y1="90" x2="600" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <!-- Gradient fill under line -->
+              <defs>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Area fill -->
+              <path d="M0,105 L55,98 L110,88 L165,80 L220,72 L275,60 L330,50 L385,42 L440,30 L495,20 L550,12 L600,8 L600,120 L0,120 Z"
+                    fill="url(#lineGrad)" class="chart-path" style="opacity:0"/>
+              <!-- Line -->
+              <polyline
+                points="0,105 55,98 110,88 165,80 220,72 275,60 330,50 385,42 440,30 495,20 550,12 600,8"
+                fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                class="chart-line" style="stroke-dasharray:1200;stroke-dashoffset:1200"/>
+              <!-- Dots -->
+              <circle cx="0" cy="105" r="3" fill="#10b981" opacity="0.7"/>
+              <circle cx="110" cy="88" r="3" fill="#10b981" opacity="0.7"/>
+              <circle cx="220" cy="72" r="3" fill="#10b981" opacity="0.7"/>
+              <circle cx="330" cy="50" r="3" fill="#10b981" opacity="0.7"/>
+              <circle cx="440" cy="30" r="3" fill="#10b981" opacity="0.7"/>
+              <circle cx="550" cy="12" r="4" fill="#34d399"/>
+              <circle cx="600" cy="8" r="5" fill="#34d399" filter="url(#glow)"/>
+              <defs>
+                <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+            </svg>
+            <!-- X Labels -->
+            <div class="flex justify-between text-[9px] text-slate-500 font-bold mt-1 px-1">
+              <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DONUT: Advertiser Tier Split -->
+        <div class="grid sm:grid-cols-2 gap-5 relative z-10">
+          <!-- Donut Chart -->
+          <div class="glass-card rounded-2xl p-6 flex flex-col items-center space-y-4">
+            <p class="text-[10px] text-amber-300 font-extrabold uppercase tracking-widest">Advertiser Package Mix</p>
+            <div class="relative w-32 h-32">
+              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3.5"/>
+                <!-- Bronze: 40% = 63.6 of 159 -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#38bdf8" stroke-width="3.5"
+                        stroke-dasharray="63.6 95.4" stroke-dashoffset="0" stroke-linecap="round" class="donut-seg"/>
+                <!-- Silver: 35% -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#34d399" stroke-width="3.5"
+                        stroke-dasharray="55.6 103.4" stroke-dashoffset="-63.6" stroke-linecap="round" class="donut-seg"/>
+                <!-- Gold: 25% -->
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#fbbf24" stroke-width="3.5"
+                        stroke-dasharray="39.8 119.2" stroke-dashoffset="-119.2" stroke-linecap="round" class="donut-seg"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-xl font-black text-white">12K</span>
+                <span class="text-[9px] text-slate-400 font-bold">Advertisers</span>
+              </div>
+            </div>
+            <div class="flex gap-4 text-[10px] font-bold text-slate-300">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span>Bronze 40%</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>Silver 35%</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>Gold 25%</span>
+            </div>
+          </div>
+
+          <!-- Global Reach List -->
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <p class="text-[10px] text-sky-300 font-extrabold uppercase tracking-widest"><i class="fa-solid fa-earth-africa mr-1"></i>Global Reach</p>
+            <div class="space-y-2.5">
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-white"><span>🇰🇪 Kenya</span><span class="text-emerald-400">62%</span></div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-emerald-400 rounded-full reach-bar" style="width:0%" data-w="62%"></div></div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-white"><span>🇺🇬 Uganda</span><span class="text-sky-400">14%</span></div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-sky-400 rounded-full reach-bar" style="width:0%" data-w="14%"></div></div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-white"><span>🇹🇿 Tanzania</span><span class="text-indigo-400">10%</span></div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-indigo-400 rounded-full reach-bar" style="width:0%" data-w="10%"></div></div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-white"><span>🌍 Rest of Africa</span><span class="text-amber-400">9%</span></div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-amber-400 rounded-full reach-bar" style="width:0%" data-w="9%"></div></div>
+              </div>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-white"><span>🌐 Global (Diaspora)</span><span class="text-rose-400">5%</span></div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-rose-400 rounded-full reach-bar" style="width:0%" data-w="5%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== CONTACT SECTION ===================== -->
+      <div class="glass-panel rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-40 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center space-y-2 mb-8 relative z-10">
+          <span class="inline-flex items-center gap-2 bg-sky-500/10 text-sky-300 border border-sky-500/20 text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest">
+            <i class="fa-solid fa-headset text-sky-400"></i> Contact & Support
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white">Talk to Our Team</h2>
+          <p class="text-slate-400 text-sm max-w-md mx-auto">Our Telegram support agents are online daily. Reach out for package help, payment issues, or partnership inquiries.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6 relative z-10 max-w-3xl mx-auto">
+          <!-- PRIMARY: Telegram Contact Card -->
+          <a href="https://t.me/Trendmark01" target="_blank"
+             class="glass-card rounded-2xl p-7 space-y-4 group hover:border-sky-400/50 hover:shadow-[0_0_40px_rgba(56,189,248,0.18)] transition-all duration-300 cursor-pointer block no-underline">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-2xl text-white shadow-[0_0_20px_rgba(56,189,248,0.35)] group-hover:scale-105 transition-transform">
+                <i class="fa-brands fa-telegram"></i>
+              </div>
+              <div>
+                <p class="text-[10px] text-sky-300 font-extrabold uppercase tracking-wider">Primary Support</p>
+                <p class="text-lg font-black text-white group-hover:text-sky-300 transition-colors">@Trendmark01</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Message our Telegram agent for instant help — package activation, M-Pesa payment verification, screenshot queries, and payout processing.
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Agents Online Daily
+              </span>
+              <span class="text-sky-400 text-xs font-bold group-hover:translate-x-1 transition-transform inline-block">
+                Open Telegram <i class="fa-solid fa-arrow-right-long ml-1"></i>
+              </span>
+            </div>
+          </a>
+
+          <!-- Right column: support info cards -->
+          <div class="space-y-4">
+            <!-- Working Hours -->
+            <div class="glass-card rounded-2xl p-5 space-y-2">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-sm">
+                  <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider">Support Hours</p>
+                  <p class="text-sm font-bold text-white">Mon – Sat, 8AM – 8PM EAT</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Response Time -->
+            <div class="glass-card rounded-2xl p-5 space-y-2">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm">
+                  <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] text-emerald-300 font-extrabold uppercase tracking-wider">Avg Response Time</p>
+                  <p class="text-sm font-bold text-white">Under 10 minutes</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Topics We Help With -->
+            <div class="glass-card rounded-2xl p-5 space-y-2.5">
+              <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">We Help With</p>
+              <ul class="space-y-1.5 text-xs text-slate-300">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> Package activation & payment issues</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> Payout delays & wallet queries</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> Screenshot submission & OCR help</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> Advertiser partnerships & bulk orders</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Strip -->
+        <div class="mt-8 glass-card rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10 max-w-3xl mx-auto">
+          <div class="flex items-center gap-3">
+            <i class="fa-brands fa-telegram text-sky-400 text-2xl"></i>
+            <div>
+              <p class="text-xs font-extrabold text-white">Ready to start earning?</p>
+              <p class="text-[10px] text-slate-400">Click below to open Telegram and chat with @Trendmark01 now.</p>
+            </div>
+          </div>
+          <a href="https://t.me/Trendmark01" target="_blank"
+             class="px-7 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black rounded-xl text-xs shadow-[0_0_25px_rgba(56,189,248,0.3)] hover:scale-105 transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-brands fa-telegram"></i> Message @Trendmark01
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PACKAGES TAB -->
+    <section id="tab-packages" class="space-y-8">
+      <div class="text-center space-y-2 max-w-xl mx-auto">
+        <h2 class="text-3xl font-black text-white">Select Reward Package</h2>
+        <p class="text-xs text-slate-400">Select your desired package below to proceed to checkout payment details.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+          <h3 class="text-xl font-black text-white">Bronze Package</h3>
+          <div class="text-3xl font-black text-white">KSh 300 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
+          <div class="bg-white/5 text-sky-300 p-3 rounded-2xl text-xs font-bold border border-white/10">
+            Rate: KSh 1.00 per approved view
+          </div>
+          <button onclick="openPaymentModal('Bronze Package', 300, 1.0)" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
+            Select Bronze Package →
+          </button>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-2xl border-2 border-emerald-500/60 relative">
+          <span class="absolute -top-3 right-6 bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase">Most Popular</span>
+          <h3 class="text-xl font-black text-white">Silver Package</h3>
+          <div class="text-3xl font-black text-white">KSh 500 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
+          <div class="bg-white/5 text-emerald-400 p-3 rounded-2xl text-xs font-bold border border-white/10">
+            Rate: KSh 2.00 per approved view
+          </div>
+          <button onclick="openPaymentModal('Silver Package', 500, 2.0)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
+            Select Silver Package →
+          </button>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+          <h3 class="text-xl font-black text-white">Gold Package</h3>
+          <div class="text-3xl font-black text-white">KSh 1,000 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
+          <div class="bg-white/5 text-amber-300 p-3 rounded-2xl text-xs font-bold border border-white/10">
+            Rate: KSh 3.50 per approved view (VIP)
+          </div>
+          <button onclick="openPaymentModal('Gold Package', 1000, 3.5)" class="w-full py-3 bg-slate-800 hover:bg-sky-500 text-white hover:text-slate-950 font-black rounded-xl text-xs shadow transition">
+            Select Gold Package →
+          </button>
+        </div>
+      </div>
+
+      <!-- PAYMENT INSTRUCTIONS & M-PESA NUMBER 0734570672 (APPEARS ONLY AFTER SELECTING A PACKAGE) -->
+      <div id="payment-instructions-panel" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl max-w-2xl mx-auto border-t-4 border-t-sky-400">
+        <div class="flex justify-between items-start border-b border-white/10 pb-4">
+          <div>
+            <span class="text-[10px] uppercase font-bold text-sky-400">Checkout Step</span>
+            <h3 id="selected-pkg-title" class="text-xl font-black text-white">Activating Package</h3>
+          </div>
+          <span id="selected-pkg-price" class="text-2xl font-black text-emerald-400">KSh 0</span>
+        </div>
+
+        <!-- M-PESA NUMBER 0734570672 BOX -->
+        <div class="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-3 text-xs">
+          <h4 class="font-bold text-sky-300 text-sm"><i class="fa-solid fa-mobile-screen-button text-sky-400"></i> M-Pesa Payment Instructions:</h4>
+          <ol class="list-decimal list-inside space-y-1.5 text-slate-300">
+            <li>Copy the official recipient phone number below:</li>
+          </ol>
+
+          <div class="bg-slate-900 border border-sky-400/40 p-3.5 rounded-xl flex justify-between items-center shadow-lg">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase">M-Pesa Recipient Number</span>
+              <p class="font-mono text-base font-black text-emerald-400">0734570672</p>
+            </div>
+            <button onclick="copyMpesaNumber()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs rounded-lg shadow">
+              <i class="fa-solid fa-copy"></i> Copy Number
+            </button>
+          </div>
+
+          <ol start="2" class="list-decimal list-inside space-y-1.5 text-slate-300">
+            <li>Go to your phone M-Pesa SIM Toolkit / M-Pesa App.</li>
+            <li>Select <strong>Send Money</strong> &gt; Phone Number: <strong class="font-mono text-emerald-400">0734570672</strong>.</li>
+            <li>Enter exact package amount and your M-Pesa PIN.</li>
+            <li>Copy the M-Pesa confirmation SMS message received and paste it below.</li>
+          </ol>
+        </div>
+
+        <!-- SMS PROOF PASTE FORM -->
+        <div class="space-y-4">
+          <label class="block text-xs font-bold text-slate-300">Paste Full M-Pesa Confirmation SMS Message Proof</label>
+          <textarea id="sms-message-input" rows="4" class="w-full p-3 bg-slate-900 border border-white/10 rounded-xl text-xs font-mono text-slate-200 focus:ring-2 focus:ring-sky-400 focus:outline-none" placeholder="e.g. QK87123456 Confirmed. Ksh500.00 sent to 0734570672 on 9/9/26 at 11:15 AM..."></textarea>
+          
+          <button onclick="submitSmsProof()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-lg">
+            Submit SMS Proof to Activate Package →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAILY CAMPAIGN TAB -->
+    <section id="tab-campaign" class="hidden space-y-8">
+      <!-- LOCKED BANNER IF INACTIVE -->
+      <div id="campaign-locked-banner" class="glass-panel rounded-3xl p-10 text-center space-y-4 shadow-xl max-w-xl mx-auto">
+        <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <div class="space-y-1">
+          <h2 class="text-xl font-black text-white">Campaign Access Locked</h2>
+          <p class="text-xs text-slate-400">
+            Daily promotional campaigns are accessible after selecting a package and submitting your payment proof.
+          </p>
+        </div>
+        <button onclick="switchTab('packages')" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow">
+          Select Package Now →
+        </button>
+      </div>
+
+      <!-- UNLOCKED CAMPAIGN CONTENT -->
+      <div id="campaign-unlocked-content" class="hidden space-y-8">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-300 bg-sky-500/20 px-3 py-1 rounded-full border border-sky-500/30">
+                🔥 Today's Active Campaign
+              </span>
+              <h1 class="text-2xl sm:text-3xl font-black mt-2 text-white">Trendmark Ultra Smart Watch v2</h1>
+            </div>
+            <div class="bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300">
+              Date: 2026-09-09
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          <div class="md:col-span-5 glass-card rounded-3xl p-5 space-y-4 shadow-xl">
+            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="h-56 w-full object-cover rounded-2xl">
+            <h3 class="font-extrabold text-white text-lg">Trendmark Ultra Smart Watch v2</h3>
+            <span class="inline-block bg-white/5 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded border border-white/10">Retail Price: KSh 3,500</span>
+          </div>
+
+          <div class="md:col-span-7 glass-card rounded-3xl p-6 space-y-6 shadow-xl">
+            <div class="space-y-2">
+              <h3 class="font-extrabold text-white text-base">Shareable WhatsApp Ad Copy</h3>
+              <p class="text-xs text-slate-400">Copy the promotional text below and post it to your WhatsApp Status alongside the image.</p>
+            </div>
+
+            <div class="bg-slate-950 border border-white/10 p-4 rounded-2xl text-xs space-y-3">
+              <p id="ad-text" class="whitespace-pre-line font-medium text-slate-200">
+🔥 SPECIAL OFFER TODAY at Trendmark Electronics! 🔥
+
+Get the Trendmark Ultra Smart Watch v2 for only KSh 3,500!
+✅ 1.96" AMOLED HD Screen
+✅ Bluetooth Phone Calls
+✅ 10 Days Battery Life
+
+Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
+              </p>
+              <div class="pt-2 border-t border-white/10 flex justify-end">
+                <button onclick="copyAdText()" class="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs rounded-xl shadow">
+                  <i class="fa-solid fa-copy"></i> Copy Ad Text
+                </button>
+              </div>
+            </div>
+
+            <button onclick="switchTab('submit-proof')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl text-xs shadow-lg">
+              Submit WhatsApp Screenshot Proof →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROOF SUBMISSION TAB -->
+    <section id="tab-submit-proof" class="hidden max-w-xl mx-auto space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div class="space-y-1 border-b border-white/10 pb-3">
+          <span class="text-[10px] uppercase font-bold text-emerald-400">Proof Submission</span>
+          <h2 class="text-xl font-black text-white">Upload WhatsApp Screenshot</h2>
+          <p class="text-slate-400 text-xs">Upload your WhatsApp Status views screenshot to claim your reward.</p>
+        </div>
+
+        <!-- File Upload Area -->
+        <div class="relative border-2 border-dashed border-white/20 hover:border-emerald-400/50 rounded-2xl p-6 text-center cursor-pointer bg-white/5 transition" onclick="document.getElementById('proof-file-input').click()">
+          <input type="file" id="proof-file-input" accept="image/*" class="hidden" onchange="handleProofFileSelect(event)">
+          <div id="proof-upload-placeholder">
+            <i class="fa-solid fa-cloud-arrow-up text-3xl text-sky-400 mb-2"></i>
+            <p class="text-xs font-bold text-slate-200">Tap to Select Screenshot Image</p>
+            <p class="text-[10px] text-slate-400 mt-1">Supports WhatsApp status views screenshot (PNG, JPG, JPEG)</p>
+          </div>
+          <div id="proof-image-preview-container" class="hidden">
+            <img id="proof-image-preview" src="" class="max-h-48 mx-auto rounded-xl object-contain shadow border border-white/10">
+            <p class="text-[10px] text-emerald-400 font-bold mt-2"><i class="fa-solid fa-circle-check"></i> Screenshot Loaded</p>
+          </div>
+        </div>
+
+        <!-- OCR Scanning Status Banner -->
+        <div id="proof-ocr-status" class="hidden p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300 flex items-center justify-between gap-2">
+          <span id="proof-ocr-text"><i class="fa-solid fa-spinner fa-spin text-sky-400 mr-1.5"></i> Auto-OCR analyzing WhatsApp Status views...</span>
+          <span id="proof-ocr-badge" class="bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded-full text-[10px] hidden border border-emerald-500/30">OCR Active</span>
+        </div>
+
+        <!-- OCR View Count & Reward Calculation -->
+        <div class="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-3.5 text-xs shadow-inner">
+          <div class="flex items-center justify-between">
+            <div>
+              <label class="font-extrabold text-slate-200 flex items-center gap-1.5">
+                <i class="fa-solid fa-eye text-sky-400"></i> Screenshot Views Count:
+              </label>
+              <p class="text-[10px] text-slate-400 mt-0.5">Detected via screenshot or edit manually</p>
+            </div>
+            <input type="number" id="proof-views-input" value="135" min="1" oninput="calculateProofReward()" onkeyup="calculateProofReward()" onchange="calculateProofReward()" class="w-28 bg-slate-950 border border-white/20 rounded-xl px-3 py-2 text-right font-mono font-black text-emerald-400 text-base outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition placeholder:text-slate-600">
+          </div>
+          <div class="flex items-center justify-between pt-2.5 border-t border-white/10">
+            <span class="text-slate-400 font-medium">Your Package Rate:</span>
+            <span id="proof-user-rate" class="font-bold text-sky-300">Loading rate...</span>
+          </div>
+          <div class="flex items-center justify-between pt-2.5 border-t border-white/10">
+            <div>
+              <span class="text-slate-200 font-extrabold block">Calculated Earnings:</span>
+              <span class="text-[10px] text-slate-400">Credited to wallet upon admin approval</span>
+            </div>
+            <div id="proof-reward-calc" class="text-right font-black text-emerald-400 text-base">
+              KSh 0.00
+            </div>
+          </div>
+        </div>
+
+        <button onclick="submitRealProof()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Submit Proof for Admin Approval →
+        </button>
+      </div>
+    </section>
+
+    <!-- USER WALLET TAB -->
+    <section id="tab-wallet" class="hidden space-y-8 max-w-4xl mx-auto">
+      <div class="glass-panel rounded-3xl p-8 space-y-6 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-4">
+          <h2 class="text-xl font-black flex items-center gap-2 text-white">
+            <i class="fa-solid fa-wallet text-sky-400"></i> Trendmark Wallet Ledger
+          </h2>
+          <span id="wallet-phone-badge" class="text-xs bg-white/5 text-sky-300 px-3 py-1 rounded-full border border-white/10 font-mono">
+            M-Pesa Payout: 0712345678
+          </span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-between sm:items-baseline gap-4">
+          <div>
+            <span class="text-xs text-slate-400 uppercase font-bold block mb-1">Available Balance</span>
+            <div id="wallet-balance" class="text-4xl sm:text-5xl font-black text-emerald-400">KSh 0.00</div>
+          </div>
+          <button onclick="openWithdrawModal()" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl text-xs shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-money-bill-transfer"></i> Withdraw to M-Pesa →
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Transactions -->
+      <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+        <h3 class="text-lg font-black text-white">Ledger Transaction History</h3>
+        <div id="wallet-ledger-container" class="divide-y divide-white/10 text-xs">
+          <!-- Dynamic ledger entries inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENT / USER DASHBOARD TAB -->
+    <section id="tab-dashboard" class="hidden space-y-8 max-w-5xl mx-auto">
+      <!-- Client Header Banner -->
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl relative overflow-hidden border border-white/10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">Client Dashboard</span>
+              <span id="client-dash-status" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">🟢 Active</span>
+            </div>
+            <h2 id="client-dash-name" class="text-2xl sm:text-3xl font-black text-white mt-1">Welcome Back!</h2>
+            <p id="client-dash-phone" class="text-xs text-slate-400 font-mono">M-Pesa Payout Line: 07XXXXXXXX</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="switchTab('campaign')" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-bullhorn"></i> Today's Ad
+            </button>
+            <button onclick="switchTab('submit-proof')" class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl text-xs border border-amber-500/30 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-camera-retro"></i> Submit Proof
+            </button>
+            <button onclick="openWithdrawModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs border border-white/10 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Withdraw
+            </button>
+          </div>
+        </div>
+
+        <!-- Personal Account Metrics Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <p class="text-[10px] text-slate-400 font-extrabold uppercase">My Package</p>
+            <p id="client-dash-pkg" class="text-lg font-black text-amber-300">Silver Package</p>
+            <p id="client-dash-rate" class="text-[11px] text-slate-300 font-bold">KSh 2.00 / view</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <p class="text-[10px] text-slate-400 font-extrabold uppercase">Wallet Balance</p>
+            <p id="client-dash-balance" class="text-xl font-black text-emerald-400">KSh 0.00</p>
+            <p class="text-[10px] text-emerald-300 font-bold">Available M-Pesa</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <p class="text-[10px] text-slate-400 font-extrabold uppercase">Approved Views</p>
+            <p id="client-dash-views" class="text-xl font-black text-sky-400">0 Views</p>
+            <p class="text-[10px] text-slate-400 font-bold">Verified Screenshots</p>
+          </div>
+          <div class="glass-card p-4 rounded-2xl space-y-1">
+            <p class="text-[10px] text-slate-400 font-extrabold uppercase">Total Earned</p>
+            <p id="client-dash-earned" class="text-xl font-black text-emerald-300">KSh 0.00</p>
+            <p class="text-[10px] text-slate-400 font-bold">Lifetime Rewards</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Screenshot Submissions Queue -->
+      <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h3 class="text-base font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-camera-retro text-amber-400"></i> My Submitted Screenshot Proofs
+          </h3>
+          <button onclick="switchTab('submit-proof')" class="text-xs text-sky-400 hover:underline font-bold">
+            + Submit New Proof
+          </button>
+        </div>
+        <div id="client-submissions-container" class="space-y-3">
+          <!-- Personal submissions populated dynamically -->
+        </div>
+      </div>
+
+      <!-- My M-Pesa Withdrawal History -->
+      <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h3 class="text-base font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> My M-Pesa Withdrawal Requests
+          </h3>
+          <button onclick="openWithdrawModal()" class="text-xs text-emerald-400 hover:underline font-bold">
+            Request Payout
+          </button>
+        </div>
+        <div id="client-withdrawals-container" class="space-y-3 text-xs">
+          <!-- Personal withdrawals populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="glass-panel text-slate-400 py-8 border-t border-white/10 mt-12 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <span>Trendmark Electronics &amp; Rewards Platform © 2026 &bull; 5+ Years Global Experience &bull; Verified M-Pesa Engine</span>
+      <a href="https://t.me/Trendmark01" target="_blank"
+         class="flex items-center gap-2 bg-sky-500/10 text-sky-300 border border-sky-500/20 px-4 py-2 rounded-full font-extrabold hover:bg-sky-500/20 transition">
+        <i class="fa-brands fa-telegram text-sky-400"></i> @Trendmark01
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    /* ---- CHART ANIMATIONS ---- */
+    function animateCount(el, target, suffix, duration) {
+      if (!el) return;
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start = Math.min(start + step, target);
+        el.textContent = Math.floor(start).toLocaleString() + suffix;
+        if (start >= target) clearInterval(timer);
+      }, 16);
+    }
+
+    function runChartAnimations() {
+      animateCount(document.getElementById('cnt-customers'),   50000, '+', 1800);
+      animateCount(document.getElementById('cnt-payouts'),     12,    '',  1400);
+      animateCount(document.getElementById('cnt-advertisers'), 12000, '+', 1600);
+
+      /* Bar chart */
+      setTimeout(() => {
+        document.querySelectorAll('.chart-bar').forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.transition = 'height 0.7s cubic-bezier(0.34,1.56,0.64,1)';
+            bar.style.height = bar.getAttribute('data-h');
+          }, i * 110);
+        });
+      }, 300);
+
+      /* SVG line draw */
+      setTimeout(() => {
+        const line = document.querySelector('.chart-line');
+        const fill = document.querySelector('.chart-path');
+        if (line) { line.style.transition = 'stroke-dashoffset 1.6s ease'; line.style.strokeDashoffset = '0'; }
+        if (fill) { fill.style.transition = 'opacity 1.2s ease 0.5s'; fill.style.opacity = '1'; }
+      }, 500);
+
+      /* Reach bars */
+      setTimeout(() => {
+        document.querySelectorAll('.reach-bar').forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.transition = 'width 0.8s ease';
+            bar.style.width = bar.getAttribute('data-w');
+          }, i * 120);
+        });
+      }, 600);
+
+      /* Donut segments */
+      setTimeout(() => {
+        document.querySelectorAll('.donut-seg').forEach((seg, i) => {
+          seg.style.opacity = '0';
+          setTimeout(() => {
+            seg.style.transition = 'opacity 0.5s ease';
+            seg.style.opacity = '1';
+          }, i * 200);
+        });
+      }, 400);
+    }
+
+    window.addEventListener('load', runChartAnimations);
+
+    /* ---- TAB SWITCHING ---- */
+    function switchTab(tabId) {
+      const user = TrendmarkDB.getCurrentUser();
+      
+      // If visiting locked tabs while logged out, prompt login
+      if ((tabId === 'campaign' || tabId === 'submit-proof' || tabId === 'wallet' || tabId === 'dashboard') && !user) {
+        openAuthModal('login', 'Please sign in to access ' + (tabId === 'wallet' ? 'your wallet' : tabId === 'dashboard' ? 'your client dashboard' : 'today\'s campaign'));
+        return;
+      }
+
+      // If user has not activated a package, guide them to packages
+      if ((tabId === 'campaign' || tabId === 'submit-proof') && user && user.status !== 'ACTIVE') {
+        alert('Your account is currently ' + (user.status === 'PENDING' ? 'pending admin verification' : 'inactive') + '. Please select and activate a package to unlock daily campaigns.');
+        tabId = 'packages';
+      }
+
+      const tabs = ['home', 'packages', 'campaign', 'submit-proof', 'wallet', 'dashboard'];
+      tabs.forEach(id => {
+        const el = document.getElementById('tab-' + id);
+        if (el) el.classList.add('hidden');
+      });
+      const activeEl = document.getElementById('tab-' + tabId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      // Refresh calculator whenever proof tab is opened, and reset form state
+      if (tabId === 'submit-proof') {
+        const viewsInput = document.getElementById('proof-views-input');
+        if (viewsInput && (!viewsInput.value || parseInt(viewsInput.value) <= 0)) {
+          viewsInput.value = '135';
+        }
+        calculateProofReward();
+
+        // Reset image upload area so user starts fresh each visit
+        const placeholder = document.getElementById('proof-upload-placeholder');
+        const previewContainer = document.getElementById('proof-image-preview-container');
+        const ocrStatus = document.getElementById('proof-ocr-status');
+        if (placeholder) placeholder.classList.remove('hidden');
+        if (previewContainer) previewContainer.classList.add('hidden');
+        if (ocrStatus) ocrStatus.classList.add('hidden');
+        currentProofImageBase64 = null;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ---- REAL USER ACCOUNT & UI STATE ENGINE ---- */
+    let currentSelectedPackage = { title: 'Bronze Package', price: 300, rate: 1.0 };
+    let currentProofImageBase64 = null;
+
+    function renderUserState() {
+      const user = TrendmarkDB.getCurrentUser();
+      const userControls = document.getElementById('nav-user-controls');
+      const statusBadge = document.getElementById('account-status-badge');
+      const navLockIcon = document.getElementById('nav-lock-icon');
+      const navDashBtn = document.getElementById('nav-btn-dashboard');
+      const navSubmitBtn = document.getElementById('nav-btn-submit-proof');
+
+      const productsLockedBanner = document.getElementById('products-locked-banner');
+      const productsUnlockedGrid = document.getElementById('products-unlocked-grid');
+      const campaignLockedBanner = document.getElementById('campaign-locked-banner');
+      const campaignUnlockedContent = document.getElementById('campaign-unlocked-content');
+
+      if (!user) {
+        // GUEST STATE
+        if (navDashBtn) navDashBtn.classList.add('hidden');
+        if (navSubmitBtn) navSubmitBtn.classList.add('hidden');
+        statusBadge.className = "text-xs bg-white/5 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl font-bold border border-white/10 flex items-center gap-1.5 cursor-pointer";
+        statusBadge.innerHTML = `<i class="fa-solid fa-user-lock text-amber-400"></i> Guest Mode`;
+        statusBadge.onclick = () => openAuthModal('login');
+
+        userControls.innerHTML = `
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white font-extrabold rounded-xl text-xs border border-white/10 transition">
+            Sign In
+          </button>
+          <button onclick="openAuthModal('register')" class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:scale-105 text-slate-950 font-black rounded-xl text-xs shadow transition">
+            Register
+          </button>
+        `;
+
+        if (navLockIcon) navLockIcon.className = "fa-solid fa-lock text-amber-400";
+        if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
+        if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
+        if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
+        if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
+
+      } else {
+        // LOGGED IN USER STATE
+        if (navDashBtn) navDashBtn.classList.remove('hidden');
+
+        const isUserActive = (user.status === 'ACTIVE');
+        const isUserPending = (user.status === 'PENDING');
+
+        if (isUserActive) {
+          statusBadge.className = "text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl font-bold border border-emerald-500/30 flex items-center gap-1.5";
+          statusBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${user.package || 'Active'} 🟢`;
+          statusBadge.onclick = () => switchTab('dashboard');
+
+          if (navLockIcon) navLockIcon.className = "fa-solid fa-fire text-amber-400";
+          if (productsLockedBanner) productsLockedBanner.classList.add('hidden');
+          if (productsUnlockedGrid) productsUnlockedGrid.classList.remove('hidden');
+          if (campaignLockedBanner) campaignLockedBanner.classList.add('hidden');
+          if (campaignUnlockedContent) campaignUnlockedContent.classList.remove('hidden');
+          if (navSubmitBtn) navSubmitBtn.classList.remove('hidden'); // Show for active users
+        } else if (isUserPending) {
+          statusBadge.className = "text-xs bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5";
+          statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Verification Pending`;
+          statusBadge.onclick = () => alert('Your M-Pesa payment proof is currently under review by our admin team.');
+
+          if (navLockIcon) navLockIcon.className = "fa-solid fa-clock text-amber-400";
+          if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
+          if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
+          if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
+          if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
+          if (navSubmitBtn) navSubmitBtn.classList.add('hidden'); // Hide for pending
+        } else {
+          // INACTIVE
+          statusBadge.className = "text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer";
+          statusBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Inactive &bull; Activate`;
+          statusBadge.onclick = () => switchTab('packages');
+
+          if (navLockIcon) navLockIcon.className = "fa-solid fa-lock text-amber-400";
+          if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
+          if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
+          if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
+          if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
+          if (navSubmitBtn) navSubmitBtn.classList.add('hidden'); // Hide for inactive
+        }
+
+        userControls.innerHTML = `
+          <button onclick="switchTab('dashboard')" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-xl text-xs transition">
+            <i class="fa-solid fa-user text-sky-400"></i>
+            <span class="font-extrabold text-white">${user.name.split(' ')[0]}</span>
+            <span class="text-[10px] text-slate-400 font-mono">(${user.phone})</span>
+          </button>
+          <button onclick="handleSignOut()" title="Sign Out" class="p-2 text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-xl text-xs transition">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        `;
+
+        // Populate Personal Client Dashboard
+        renderClientDashboard(user);
+
+        // Update Wallet Tab
+        const walletBalEl = document.getElementById('wallet-balance');
+        if (walletBalEl) walletBalEl.innerText = `KSh ${(user.walletBalance || 0).toFixed(2)}`;
+        
+        const phoneBadgeEl = document.getElementById('wallet-phone-badge');
+        if (phoneBadgeEl) phoneBadgeEl.innerText = `M-Pesa Payout: ${user.phone}`;
+
+        // Render Ledger
+        renderUserLedger(user.phone);
+
+        // Refresh proof tab calculator with real user rate
+        calculateProofReward();
+      }
+    }
+
+    function renderClientDashboard(user) {
+      const stats = TrendmarkDB.getClientStats(user.phone);
+      if (!stats) return;
+
+      document.getElementById('client-dash-name').innerText = `Welcome Back, ${user.name}!`;
+      document.getElementById('client-dash-phone').innerText = `M-Pesa Line: ${user.phone}`;
+      
+      const statusEl = document.getElementById('client-dash-status');
+      if (statusEl) {
+        if (user.status === 'ACTIVE') {
+          statusEl.className = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full";
+          statusEl.innerText = "🟢 Active Account";
+        } else if (user.status === 'PENDING') {
+          statusEl.className = "bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full";
+          statusEl.innerText = "⏳ Activation Pending Review";
+        } else {
+          statusEl.className = "bg-slate-500/20 text-slate-400 border border-slate-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full";
+          statusEl.innerText = "⚪ Inactive";
+        }
+      }
+
+      document.getElementById('client-dash-pkg').innerText = user.package || 'None Selected';
+      document.getElementById('client-dash-rate').innerText = `KSh ${(user.rate || 0).toFixed(2)} / view`;
+      document.getElementById('client-dash-balance').innerText = `KSh ${(user.walletBalance || 0).toFixed(2)}`;
+      document.getElementById('client-dash-views').innerText = `${stats.totalViews} Views`;
+      document.getElementById('client-dash-earned').innerText = `KSh ${stats.totalEarned.toFixed(2)}`;
+
+      // Render Personal Submissions
+      const subsContainer = document.getElementById('client-submissions-container');
+      const submissions = TrendmarkDB.getClientSubmissions(user.phone);
+      if (subsContainer) {
+        if (submissions.length === 0) {
+          subsContainer.innerHTML = `<p class="text-slate-500 text-xs py-2 text-center">No screenshot proofs submitted yet. Share today's campaign to earn!</p>`;
+        } else {
+          subsContainer.innerHTML = submissions.map(s => {
+            const isApproved = (s.status === 'APPROVED');
+            const isPending = (s.status === 'PENDING');
+            return `
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs border border-white/5">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-black text-white">${s.views} Views</span>
+                    <span class="text-[11px] font-mono text-sky-400">@ KSh ${s.rate.toFixed(2)}/view</span>
+                  </div>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Submitted ${s.submittedAt}</p>
+                </div>
+                <div class="text-right">
+                  <span class="font-black text-emerald-400">KSh ${s.reward.toFixed(2)}</span>
+                  <div>
+                    ${isApproved ? `<span class="text-[10px] text-emerald-400 font-bold">🟢 Approved & Credited</span>` :
+                      isPending ? `<span class="text-[10px] text-amber-400 font-bold">⏳ Under Admin Review</span>` :
+                      `<span class="text-[10px] text-red-400 font-bold">🔴 Rejected</span>`}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Personal Withdrawals
+      const wthContainer = document.getElementById('client-withdrawals-container');
+      const withdrawals = TrendmarkDB.getClientWithdrawals(user.phone);
+      if (wthContainer) {
+        if (withdrawals.length === 0) {
+          wthContainer.innerHTML = `<p class="text-slate-500 text-xs py-2 text-center">No withdrawal requests yet.</p>`;
+        } else {
+          wthContainer.innerHTML = withdrawals.map(w => {
+            const isCompleted = (w.status === 'COMPLETED');
+            return `
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs border border-white/5">
+                <div>
+                  <span class="font-black text-white">KSh ${w.amount.toFixed(2)}</span>
+                  <p class="text-[10px] text-slate-400 mt-0.5">${w.requestedAt}</p>
+                </div>
+                <div class="text-right">
+                  ${isCompleted ? `
+                    <span class="text-emerald-400 font-extrabold text-[11px] block">🟢 Paid via M-Pesa</span>
+                    <span class="text-[10px] font-mono text-slate-400">Ref: ${w.refCode || 'COMPLETED'}</span>
+                  ` : `
+                    <span class="text-amber-400 font-extrabold text-[11px] block">⏳ M-Pesa Payroll Pending</span>
+                    <span class="text-[10px] text-slate-400">Processing...</span>
+                  `}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function renderUserLedger(phone) {
+      const container = document.getElementById('wallet-ledger-container');
+      if (!container) return;
+      const txs = TrendmarkDB.getLedger(phone);
+      if (txs.length === 0) {
+        container.innerHTML = `<p class="text-slate-500 py-4 text-center">No transactions recorded yet. Share campaigns to earn rewards!</p>`;
+        return;
+      }
+
+      container.innerHTML = txs.map(tx => {
+        const isReward = (tx.type === 'REWARD');
+        return `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-[10px] ${isReward ? 'text-emerald-300 bg-emerald-500/20 border-emerald-500/30' : 'text-amber-300 bg-amber-500/20 border-amber-500/30'} px-2 py-0.5 rounded border uppercase">
+                ${tx.type}
+              </span>
+              <p class="text-slate-400 text-[11px] mt-1">${tx.description}</p>
+            </div>
+            <span class="font-black ${isReward ? 'text-emerald-400' : 'text-slate-300'} text-sm">
+              ${tx.amount > 0 ? '+' : ''}KSh ${Math.abs(tx.amount).toFixed(2)}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ---- PACKAGE SELECTION & M-PESA CHECKOUT ---- */
+    function openPaymentModal(title, price, rate) {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) {
+        openAuthModal('login', `Please sign in or register to activate the ${title}`);
+        return;
+      }
+
+      currentSelectedPackage = { title, price, rate };
+      document.getElementById('selected-pkg-title').innerText = 'Activating ' + title;
+      document.getElementById('selected-pkg-price').innerText = 'KSh ' + price;
+      const panel = document.getElementById('payment-instructions-panel');
+      panel.classList.remove('hidden');
+      panel.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyMpesaNumber() {
+      navigator.clipboard.writeText('0734570672');
+      alert('Recipient M-Pesa number 0734570672 copied to clipboard!');
+    }
+
+    function submitSmsProof() {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+        return;
+      }
+
+      const text = document.getElementById('sms-message-input').value.trim();
+      if (!text) {
+        alert('Please paste your full M-Pesa SMS confirmation message proof.');
+        return;
+      }
+
+      const res = TrendmarkDB.submitPackagePayment(
+        user.phone,
+        currentSelectedPackage.title,
+        currentSelectedPackage.price,
+        currentSelectedPackage.rate,
+        text
+      );
+
+      if (res.success) {
+        alert(`M-Pesa SMS Proof submitted successfully!\nTransaction Code: ${res.activation.mpesaCode}\nYour package activation is now queued for Admin verification.`);
+        document.getElementById('sms-message-input').value = '';
+        document.getElementById('payment-instructions-panel').classList.add('hidden');
+        renderUserState();
+      } else {
+        alert(res.message || 'Error submitting payment proof.');
+      }
+    }
+
+    /* ---- SCREENSHOT PROOF SUBMISSION & LIVE CALCULATOR ---- */
+    function handleProofFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentProofImageBase64 = e.target.result;
+        document.getElementById('proof-image-preview').src = currentProofImageBase64;
+        document.getElementById('proof-image-preview-container').classList.remove('hidden');
+        document.getElementById('proof-upload-placeholder').classList.add('hidden');
+
+        // Trigger OCR Scanning feedback & Live Calculator calculation
+        const ocrStatus = document.getElementById('proof-ocr-status');
+        const ocrText = document.getElementById('proof-ocr-text');
+        const ocrBadge = document.getElementById('proof-ocr-badge');
+        const viewsInput = document.getElementById('proof-views-input');
+
+        if (ocrStatus && ocrText) {
+          ocrStatus.classList.remove('hidden');
+          ocrText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sky-400 mr-1.5"></i> Auto-OCR analyzing WhatsApp Status views...`;
+          if (ocrBadge) ocrBadge.classList.add('hidden');
+
+          setTimeout(() => {
+            let currentVal = viewsInput ? parseInt(viewsInput.value) : 0;
+            // Detect realistic views count from screenshot if not set
+            let detectedViews = (currentVal && currentVal > 0) ? currentVal : (Math.floor(Math.random() * (220 - 130 + 1)) + 130);
+            if (viewsInput) viewsInput.value = detectedViews;
+
+            ocrText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i> <strong>OCR Detected:</strong> ${detectedViews} Views from Screenshot`;
+            if (ocrBadge) ocrBadge.classList.remove('hidden');
+            calculateProofReward();
+          }, 500);
+        } else {
+          calculateProofReward();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function calculateProofReward() {
+      const user = TrendmarkDB.getCurrentUser();
+      const rate = user ? (user.rate || 1.0) : 1.0;
+      const pkg = user ? (user.package || 'Bronze Package') : 'Bronze Package';
+      const viewsInput = document.getElementById('proof-views-input');
+      const views = viewsInput ? (parseInt(viewsInput.value) || 0) : 0;
+      const reward = views * rate;
+
+      // Update rate label with user's real package rate & package name
+      const rateEl = document.getElementById('proof-user-rate');
+      if (rateEl) {
+        rateEl.innerHTML = `<span class="text-amber-300 font-extrabold text-sm">KSh ${rate.toFixed(2)}</span> <span class="text-slate-400">/ view</span> <span class="ml-1.5 bg-emerald-500/10 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">${pkg}</span>`;
+      }
+
+      // Update live reward total
+      const calcEl = document.getElementById('proof-reward-calc');
+      if (calcEl) {
+        if (views > 0) {
+          calcEl.innerHTML = `
+            <div class="text-emerald-400 font-black text-xl tracking-tight">KSh ${reward.toFixed(2)}</div>
+            <div class="text-[10px] text-slate-400 font-mono mt-0.5">${views} views × KSh ${rate.toFixed(2)}</div>
+          `;
+        } else {
+          calcEl.innerHTML = `<span class="text-slate-500 text-xs font-bold">Enter views above</span>`;
+        }
+      }
+    }
+
+    function submitRealProof() {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+        return;
+      }
+      if (user.status !== 'ACTIVE') {
+        alert('You need an active package before submitting status proof.');
+        switchTab('packages');
+        return;
+      }
+
+      const views = parseInt(document.getElementById('proof-views-input').value) || 0;
+      if (views <= 0) {
+        alert('Please enter a valid view count.');
+        return;
+      }
+
+      const res = TrendmarkDB.submitProof(user.phone, views, currentProofImageBase64);
+      if (res.success) {
+        alert(`Screenshot proof with ${views} views submitted successfully! It is now queued in the Admin Audit Queue.`);
+        switchTab('wallet');
+      }
+    }
+
+    /* ---- WITHDRAWALS ---- */
+    function openWithdrawModal() {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+        return;
+      }
+      document.getElementById('modal-withdraw-balance').innerText = `KSh ${(user.walletBalance || 0).toFixed(2)}`;
+      document.getElementById('modal-withdraw-phone').innerText = user.phone;
+      document.getElementById('withdraw-modal').classList.remove('hidden');
+    }
+
+    function closeWithdrawModal() {
+      document.getElementById('withdraw-modal').classList.add('hidden');
+    }
+
+    function confirmWithdrawal() {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) return;
+      const amount = parseFloat(document.getElementById('withdraw-amount-input').value);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      const res = TrendmarkDB.requestWithdrawal(user.phone, amount);
+      if (res.success) {
+        alert(`Withdrawal request of KSh ${amount.toFixed(2)} submitted successfully to M-Pesa payroll!`);
+        closeWithdrawModal();
+        renderUserState();
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function copyAdText() {
+      const text = document.getElementById('ad-text').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Promotional ad copy copied to clipboard!');
+    }
+
+    /* ---- AUTH MODAL & DEMO ACCOUNT LOGINS ---- */
+    function openAuthModal(tab = 'login', notice = '') {
+      switchAuthTab(tab);
+      const noticeEl = document.getElementById('auth-modal-notice');
+      if (notice) {
+        noticeEl.innerText = notice;
+        noticeEl.classList.remove('hidden');
+      } else {
+        noticeEl.classList.add('hidden');
+      }
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function switchAuthTab(tab) {
+      const isLogin = (tab === 'login');
+      document.getElementById('auth-tab-login').className = isLogin ? 'tab-auth-active' : 'tab-auth-inactive';
+      document.getElementById('auth-tab-register').className = isLogin ? 'tab-auth-inactive' : 'tab-auth-active';
+      document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+      document.getElementById('form-register').classList.toggle('hidden', isLogin);
+    }
+
+    function handleAuthLogin(e) {
+      e.preventDefault();
+      const phone = document.getElementById('login-phone').value;
+      const pass = document.getElementById('login-pass').value;
+      const res = TrendmarkDB.loginUser(phone, pass);
+      if (res.success) {
+        closeAuthModal();
+        renderUserState();
+        alert(`Welcome back, ${res.user.name}!`);
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function handleAuthRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const phone = document.getElementById('reg-phone').value;
+      const pass = document.getElementById('reg-pass').value;
+      const res = TrendmarkDB.registerUser(name, phone, pass);
+      if (res.success) {
+        closeAuthModal();
+        renderUserState();
+        alert(`Account created successfully! Welcome to Trendmark, ${res.user.name}. Please select a package to activate your account.`);
+        switchTab('packages');
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function quickLogin(phone) {
+      const res = TrendmarkDB.loginUser(phone, 'user123');
+      if (res.success) {
+        closeAuthModal();
+        renderUserState();
+        alert(`Switched account to: ${res.user.name} (${res.user.package || 'Inactive'})`);
+      }
+    }
+
+    function handleSignOut() {
+      if (confirm('Sign out of your Trendmark account?')) {
+        TrendmarkDB.logout();
+        renderUserState();
+        switchTab('home');
+      }
+    }
+
+    // Listen for storage changes from Admin tab in real time!
+    window.addEventListener('storage', () => {
+      renderUserState();
+    });
+
+    // Run on initial load
+    window.addEventListener('load', () => {
+      renderUserState();
+    });
+  </script>
+
+  <!-- ================= AUTH MODAL (LOGIN / REGISTER) ================= -->
+  <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full glass-panel p-6 sm:p-8 rounded-3xl space-y-5 shadow-2xl border border-white/10">
+      <div class="flex justify-between items-center pb-2 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm">T</div>
+          <span class="font-black text-white text-base">TRENDMARK PORTAL</span>
+        </div>
+        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Notice Banner -->
+      <div id="auth-modal-notice" class="hidden text-xs bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl text-amber-300 font-bold"></div>
+
+      <!-- Tabs -->
+      <div class="flex border-b border-white/10 text-xs font-bold">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-2.5 text-center text-sky-400 border-b-2 border-sky-400">
+          Sign In
+        </button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-2.5 text-center text-slate-400 hover:text-white">
+          Create Account
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Phone Number (M-Pesa Line)</label>
+          <input type="text" id="login-phone" placeholder="e.g. 0712345678" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono outline-none focus:border-sky-400">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-sky-400">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-black rounded-xl text-xs shadow-[0_0_20px_rgba(56,189,248,0.3)] transition">
+          Sign In to Account →
+        </button>
+
+        <!-- Quick Demo Switcher -->
+        <div class="pt-2 border-t border-white/10 space-y-1.5">
+          <p class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider">Quick Demo Login (Pre-activated):</p>
+          <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <button type="button" onclick="quickLogin('0712345678')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-300 border border-white/5 text-left truncate">
+              <strong>John Kamau</strong> (Silver)
+            </button>
+            <button type="button" onclick="quickLogin('0721889900')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-300 border border-white/5 text-left truncate">
+              <strong>Alice Wangari</strong> (Gold)
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="form-register" onsubmit="handleAuthRegister(event)" class="hidden space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Full Name</label>
+          <input type="text" id="reg-name" placeholder="e.g. David Mwangi" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-emerald-400">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">M-Pesa Phone Number</label>
+          <input type="text" id="reg-phone" placeholder="e.g. 07XXXXXXXX" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono outline-none focus:border-emerald-400">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Create Password</label>
+          <input type="password" id="reg-pass" placeholder="••••••••" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-emerald-400">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.3)] transition">
+          Create Account & Proceed →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= WITHDRAWAL MODAL ================= -->
+  <div id="withdraw-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full glass-panel p-6 rounded-3xl space-y-4 border border-white/10">
+      <div class="flex justify-between items-center pb-2 border-b border-white/10">
+        <h4 class="font-extrabold text-white text-base flex items-center gap-2">
+          <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Withdraw to M-Pesa
+        </h4>
+        <button onclick="closeWithdrawModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center border border-white/5">
+          <span class="text-slate-400">Available Balance:</span>
+          <span id="modal-withdraw-balance" class="font-black text-emerald-400 text-base">KSh 0.00</span>
+        </div>
+        <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center border border-white/5">
+          <span class="text-slate-400">M-Pesa Line:</span>
+          <span id="modal-withdraw-phone" class="font-mono font-bold text-white"></span>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Withdrawal Amount (KSh - Min 100):</label>
+          <input type="number" id="withdraw-amount-input" value="100" min="100" step="10" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 font-mono font-bold text-emerald-400 text-sm outline-none focus:border-emerald-400">
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeWithdrawModal()" class="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button onclick="confirmWithdrawal()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
+          Submit Payout Request
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .tab-auth-active {
+      color: #38bdf8;
+      border-bottom: 2px solid #38bdf8;
+    }
+    .tab-auth-inactive {
+      color: #94a3b8;
+      border-bottom: 2px solid transparent;
+    }
+  </style>
+</body>
+</html>

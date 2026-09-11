@@ -1,0 +1,9 @@
+# Netlify Redirects for Trendmark
+/admin        /admin.html       200!
+/admin/*      /admin.html       200!
+/dashboard    /index.html       200
+/portal       /index.html       200
+/packages     /index.html       200
+/campaign     /index.html       200
+/wallet       /index.html       200
+/*            /index.html       200

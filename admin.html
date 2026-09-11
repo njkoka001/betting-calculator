@@ -1,0 +1,1178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trendmark Admin Control Center | Payroll & Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="trendmark-db.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #030712; color: #f9fafb; }
+
+    /* Glassmorphism Styles */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.12);
+    }
+
+    .tab-btn.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.4); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <!-- Ambient Glow Orbs -->
+  <div class="fixed top-[-10%] left-[10%] w-[550px] h-[550px] bg-amber-600/15 rounded-full blur-[140px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-[10%] right-[10%] w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-lg tracking-tight text-white">TRENDMARK</span>
+            <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Admin Portal</span>
+          </div>
+          <span class="block text-[10px] font-bold text-slate-400">Payroll Engine, OCR Audits & Package Activations</span>
+        </div>
+      </div>
+
+      <!-- Action & Profile Links -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-xl font-bold transition">
+          <i class="fa-solid fa-arrow-up-right-from-square text-sky-400"></i> Open User Platform
+        </a>
+        <div class="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="admin-name-display">Master Admin (0734570672)</span>
+        </div>
+        <button onclick="handleAdminSignOut()" id="admin-logout-btn" class="hidden flex items-center gap-1.5 text-xs text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-xl font-bold transition">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ADMIN AUTHENTICATION GATE (UNAUTHENTICATED ACCESS) -->
+  <div id="admin-auth-gate" class="hidden flex-1 max-w-md w-full mx-auto p-4 sm:p-6 relative z-10 flex flex-col justify-center my-12">
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl border border-amber-500/30 text-center">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-3xl mx-auto shadow-[0_0_30px_rgba(245,158,11,0.4)]">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      
+      <div class="space-y-1">
+        <h2 class="text-2xl font-black text-white">Central Admin Security Gate</h2>
+        <p class="text-xs text-slate-400">Restricted to authorized Trendmark Platform Administrators.</p>
+      </div>
+
+      <!-- Client Session Notice if logged in as client -->
+      <div id="admin-client-notice" class="hidden text-left"></div>
+
+      <!-- Admin Login Form -->
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-xs text-left">
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Administrator Phone / ID</label>
+          <input type="text" id="admin-id-input" value="0734570672" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono outline-none focus:border-amber-400">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-slate-300 font-bold">Master Password / PIN</label>
+          <input type="password" id="admin-pass-input" placeholder="••••••••" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-amber-400">
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-xl text-xs shadow-[0_0_20px_rgba(245,158,11,0.3)] transition">
+          Authorize Admin Access →
+        </button>
+
+        <div class="pt-2 border-t border-white/10 text-center">
+          <button type="button" onclick="quickAdminLogin()" class="text-[11px] text-amber-300 hover:underline font-bold">
+            ⚡ Quick Demo Admin Login (0734570672 / admin123)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Container (AUTHENTICATED ADMIN) -->
+  <div id="admin-main-container" class="hidden flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 relative z-10 flex flex-col md:flex-row gap-6">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 space-y-3 flex-shrink-0">
+      <div class="glass-panel p-4 rounded-3xl space-y-1">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-3 py-1">Management Hub</p>
+        
+        <button onclick="switchAdminTab('overview')" id="nav-overview" class="tab-btn active w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-chart-pie w-4 text-sky-400"></i> Dashboard Overview</span>
+        </button>
+
+        <button onclick="switchAdminTab('withdrawals')" id="nav-withdrawals" class="tab-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-money-bill-transfer w-4 text-emerald-400"></i> Payroll & Withdrawals</span>
+          <span id="badge-pending-withdrawals" class="bg-amber-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">2 Pending</span>
+        </button>
+
+        <button onclick="switchAdminTab('reviews')" id="nav-reviews" class="tab-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-camera-retro w-4 text-amber-400"></i> Screenshot & OCR Audit</span>
+          <span id="badge-pending-reviews" class="bg-sky-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">3 Proofs</span>
+        </button>
+
+        <button onclick="switchAdminTab('activations')" id="nav-activations" class="tab-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-mobile-screen-button w-4 text-indigo-400"></i> M-Pesa Package Verif.</span>
+          <span id="badge-pending-activations" class="bg-emerald-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">2 New</span>
+        </button>
+
+        <button onclick="switchAdminTab('campaigns')" id="nav-campaigns" class="tab-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-bullhorn w-4 text-purple-400"></i> Daily Ads Scheduler</span>
+        </button>
+
+        <button onclick="switchAdminTab('users')" id="nav-users" class="tab-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition">
+          <span class="flex items-center gap-2.5"><i class="fa-solid fa-users w-4 text-teal-400"></i> User Directory</span>
+        </button>
+      </div>
+
+      <!-- Quick M-Pesa Recipient Alert -->
+      <div class="glass-card p-4 rounded-3xl border border-sky-500/20 space-y-2">
+        <div class="flex items-center gap-2 text-sky-400 text-xs font-bold">
+          <i class="fa-solid fa-circle-info"></i> Official Payment SIM
+        </div>
+        <p class="text-[11px] text-slate-400">Recipient line for package activations:</p>
+        <div class="bg-black/40 p-2.5 rounded-xl text-center font-mono font-black text-white text-sm tracking-wider border border-white/10">
+          0734570672
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Work Area -->
+    <main class="flex-1 min-w-0">
+
+      <!-- ================= 1. OVERVIEW TAB ================= -->
+      <section id="view-overview" class="space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <span>Admin Operations Center</span>
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Real-time statistics on submissions, payouts, and subscriber revenue</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportDataReport()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold text-slate-200 flex items-center gap-2 transition">
+              <i class="fa-solid fa-download text-amber-400"></i> Export Report
+            </button>
+            <button onclick="location.reload()" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black transition">
+              <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-card p-5 rounded-3xl space-y-2 border-l-4 border-l-amber-500">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pending Withdrawals</span>
+            <div class="text-2xl font-black text-amber-400" id="kpi-pending-withdrawals">KSh 3,450.00</div>
+            <p class="text-[10px] text-amber-300 font-bold"><i class="fa-solid fa-clock"></i> 2 pending requests</p>
+          </div>
+
+          <div class="glass-card p-5 rounded-3xl space-y-2 border-l-4 border-l-emerald-500">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Completed Payroll</span>
+            <div class="text-2xl font-black text-emerald-400" id="kpi-completed-withdrawals">KSh 18,290.00</div>
+            <p class="text-[10px] text-emerald-300 font-bold"><i class="fa-solid fa-check-double"></i> 14 transactions paid</p>
+          </div>
+
+          <div class="glass-card p-5 rounded-3xl space-y-2 border-l-4 border-l-sky-500">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Screenshot Audits</span>
+            <div class="text-2xl font-black text-sky-400" id="kpi-pending-reviews">3 Pending</div>
+            <p class="text-[10px] text-sky-300 font-bold"><i class="fa-solid fa-camera"></i> 512 total views to verify</p>
+          </div>
+
+          <div class="glass-card p-5 rounded-3xl space-y-2 border-l-4 border-l-indigo-500">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Active Subscribers</span>
+            <div class="text-2xl font-black text-indigo-400">1,248 Users</div>
+            <p class="text-[10px] text-indigo-300 font-bold"><i class="fa-solid fa-arrow-trend-up"></i> +48 today</p>
+          </div>
+        </div>
+
+        <!-- Two Columns: Pending Queues Quick Access -->
+        <div class="grid lg:grid-cols-2 gap-6">
+          <!-- Quick Withdrawals Box -->
+          <div class="glass-panel p-6 rounded-3xl space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-black text-white text-base flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Urgent Payout Requests
+              </h3>
+              <button onclick="switchAdminTab('withdrawals')" class="text-xs text-amber-400 font-bold hover:underline">
+                View All →
+              </button>
+            </div>
+            <div class="space-y-3" id="quick-withdrawals-list">
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <p class="font-extrabold text-white">Alice Wangari</p>
+                  <p class="text-slate-400 font-mono text-[11px]">0721889900 &bull; Gold Package</p>
+                </div>
+                <div class="text-right">
+                  <span class="font-black text-emerald-400 text-sm">KSh 2,100.00</span>
+                  <p class="text-[10px] text-amber-400 font-bold">M-Pesa Pending</p>
+                </div>
+              </div>
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <p class="font-extrabold text-white">Brian Otieno</p>
+                  <p class="text-slate-400 font-mono text-[11px]">0711445566 &bull; Silver Package</p>
+                </div>
+                <div class="text-right">
+                  <span class="font-black text-emerald-400 text-sm">KSh 1,350.00</span>
+                  <p class="text-[10px] text-amber-400 font-bold">M-Pesa Pending</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Screenshot Reviews Box -->
+          <div class="glass-panel p-6 rounded-3xl space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-black text-white text-base flex items-center gap-2">
+                <i class="fa-solid fa-camera-retro text-amber-400"></i> Recent Status Submissions
+              </h3>
+              <button onclick="switchAdminTab('reviews')" class="text-xs text-amber-400 font-bold hover:underline">
+                Audit Queue →
+              </button>
+            </div>
+            <div class="space-y-3" id="quick-reviews-list">
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <p class="font-extrabold text-white">John Kamau</p>
+                  <p class="text-slate-400 font-mono text-[11px]">0712345678 &bull; OCR: 137 Views</p>
+                </div>
+                <div class="text-right">
+                  <span class="font-black text-sky-400 text-sm">KSh 274.00</span>
+                  <p class="text-[10px] text-sky-300 font-bold">Ready to credit</p>
+                </div>
+              </div>
+              <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <p class="font-extrabold text-white">Mercy Muthoni</p>
+                  <p class="text-slate-400 font-mono text-[11px]">0798765432 &bull; OCR: 245 Views</p>
+                </div>
+                <div class="text-right">
+                  <span class="font-black text-amber-400 text-sm">KSh 857.50</span>
+                  <p class="text-[10px] text-sky-300 font-bold">Gold Tier (3.5x)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 2. WITHDRAWALS & PAYROLL TAB ================= -->
+      <section id="view-withdrawals" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Payroll & Withdrawals
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Audit all user withdrawal requests, mark completed payouts, and generate batch M-Pesa payrolls</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="processBatchPayroll()" class="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105 transition flex items-center gap-2">
+              <i class="fa-solid fa-bolt"></i> Batch Pay All Pending M-Pesa
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Sub-tabs: Pending vs Completed vs All -->
+        <div class="flex items-center gap-2 border-b border-white/10 pb-3 text-xs font-bold">
+          <button onclick="filterWithdrawals('all')" id="w-filter-all" class="px-4 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            All Records (<span id="count-all-w">5</span>)
+          </button>
+          <button onclick="filterWithdrawals('pending')" id="w-filter-pending" class="px-4 py-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white">
+            Pending (<span id="count-pending-w">2</span>)
+          </button>
+          <button onclick="filterWithdrawals('completed')" id="w-filter-completed" class="px-4 py-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white">
+            Completed / Paid (<span id="count-completed-w">3</span>)
+          </button>
+        </div>
+
+        <!-- Withdrawals Table -->
+        <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-black/40 text-slate-400 font-extrabold uppercase text-[10px] tracking-wider border-b border-white/10">
+                <tr>
+                  <th class="p-4">User & Phone</th>
+                  <th class="p-4">Package Tier</th>
+                  <th class="p-4">Amount (KSh)</th>
+                  <th class="p-4">Request Time</th>
+                  <th class="p-4">M-Pesa Status</th>
+                  <th class="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5" id="withdrawals-table-body">
+                <!-- Row 1: Pending -->
+                <tr class="hover:bg-white/5 transition withdrawal-row" data-status="pending" id="w-row-1">
+                  <td class="p-4">
+                    <div class="font-extrabold text-white text-sm">Alice Wangari</div>
+                    <div class="text-[11px] font-mono text-slate-400">0721889900</div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Gold VIP</span>
+                  </td>
+                  <td class="p-4 font-black text-emerald-400 text-sm">KSh 2,100.00</td>
+                  <td class="p-4 text-slate-400">Today, 11:20 AM</td>
+                  <td class="p-4">
+                    <span class="status-badge bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Pending Payment
+                    </span>
+                  </td>
+                  <td class="p-4 text-right">
+                    <button onclick="openPayModal('Alice Wangari', '0721889900', 2100, 'w-row-1')" class="action-btn px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs shadow transition">
+                      Process M-Pesa Pay
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 2: Pending -->
+                <tr class="hover:bg-white/5 transition withdrawal-row" data-status="pending" id="w-row-2">
+                  <td class="p-4">
+                    <div class="font-extrabold text-white text-sm">Brian Otieno</div>
+                    <div class="text-[11px] font-mono text-slate-400">0711445566</div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Silver</span>
+                  </td>
+                  <td class="p-4 font-black text-emerald-400 text-sm">KSh 1,350.00</td>
+                  <td class="p-4 text-slate-400">Today, 10:45 AM</td>
+                  <td class="p-4">
+                    <span class="status-badge bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Pending Payment
+                    </span>
+                  </td>
+                  <td class="p-4 text-right">
+                    <button onclick="openPayModal('Brian Otieno', '0711445566', 1350, 'w-row-2')" class="action-btn px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs shadow transition">
+                      Process M-Pesa Pay
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 3: Completed -->
+                <tr class="hover:bg-white/5 transition withdrawal-row" data-status="completed" id="w-row-3">
+                  <td class="p-4">
+                    <div class="font-extrabold text-white text-sm">Denis Mutua</div>
+                    <div class="text-[11px] font-mono text-slate-400">0701234567</div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Bronze</span>
+                  </td>
+                  <td class="p-4 font-black text-white text-sm">KSh 620.00</td>
+                  <td class="p-4 text-slate-400">Yesterday, 04:15 PM</td>
+                  <td class="p-4">
+                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                      <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed (QK89XLP01)
+                    </span>
+                  </td>
+                  <td class="p-4 text-right text-slate-500 text-[11px]">
+                    Paid via B2C
+                  </td>
+                </tr>
+
+                <!-- Row 4: Completed -->
+                <tr class="hover:bg-white/5 transition withdrawal-row" data-status="completed" id="w-row-4">
+                  <td class="p-4">
+                    <div class="font-extrabold text-white text-sm">Faith Mwangi</div>
+                    <div class="text-[11px] font-mono text-slate-400">0722334455</div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Gold VIP</span>
+                  </td>
+                  <td class="p-4 font-black text-white text-sm">KSh 4,800.00</td>
+                  <td class="p-4 text-slate-400">Yesterday, 02:00 PM</td>
+                  <td class="p-4">
+                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                      <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed (QK87TRQ88)
+                    </span>
+                  </td>
+                  <td class="p-4 text-right text-slate-500 text-[11px]">
+                    Paid via B2C
+                  </td>
+                </tr>
+
+                <!-- Row 5: Completed -->
+                <tr class="hover:bg-white/5 transition withdrawal-row" data-status="completed" id="w-row-5">
+                  <td class="p-4">
+                    <div class="font-extrabold text-white text-sm">George Ochieng</div>
+                    <div class="text-[11px] font-mono text-slate-400">0733998877</div>
+                  </td>
+                  <td class="p-4">
+                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">Silver</span>
+                  </td>
+                  <td class="p-4 font-black text-white text-sm">KSh 1,200.00</td>
+                  <td class="p-4 text-slate-400">Sep 7, 06:30 PM</td>
+                  <td class="p-4">
+                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                      <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed (QK81ZZT44)
+                    </span>
+                  </td>
+                  <td class="p-4 text-right text-slate-500 text-[11px]">
+                    Paid via B2C
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 3. SCREENSHOT & OCR AUDIT TAB ================= -->
+      <section id="view-reviews" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-camera-retro text-amber-400"></i> Screenshot & OCR Audit Queue
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Review user WhatsApp Status screenshots, confirm OCR view counts, and credit user wallet balances</p>
+          </div>
+          <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-2">
+            <i class="fa-solid fa-circle-nodes"></i> Auto-OCR Tesseract Engine Active
+          </span>
+        </div>
+
+        <div class="space-y-4" id="reviews-queue-container">
+          <!-- Dynamically populated by renderReviewsQueue() on window load -->
+        </div>
+      </section>
+
+
+      <!-- ================= 4. M-PESA PACKAGE ACTIVATIONS TAB ================= -->
+      <section id="view-activations" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-mobile-screen-button text-indigo-400"></i> M-Pesa Package Activation Queue
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Verify M-Pesa SMS messages submitted by subscribers paying to <strong>0734570672</strong></p>
+          </div>
+        </div>
+
+        <div class="space-y-4" id="activations-container">
+          <!-- Dynamically populated by renderActivationsQueue() on window load -->
+        </div>
+      </section>
+
+
+      <!-- ================= 5. DAILY ADS SCHEDULER TAB ================= -->
+      <section id="view-campaigns" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn text-purple-400"></i> Daily Ads Scheduler
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Configure today's featured electronics product and promotional ad text for subscribers to post on WhatsApp</p>
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl space-y-6">
+          <div class="grid sm:grid-cols-2 gap-5 text-xs">
+            <div class="space-y-2">
+              <label class="font-extrabold text-slate-300">Campaign Product Title</label>
+              <input type="text" id="campaign-title" value="Trendmark Ultra Smart Watch v2" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-bold focus:border-amber-400 outline-none">
+            </div>
+
+            <div class="space-y-2">
+              <label class="font-extrabold text-slate-300">Target Product Price (KSh)</label>
+              <input type="number" id="campaign-price" value="3500" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-bold focus:border-amber-400 outline-none">
+            </div>
+
+            <div class="sm:col-span-2 space-y-2">
+              <label class="font-extrabold text-slate-300">Promotional Copy (Subscribers will copy & share this on WhatsApp)</label>
+              <textarea id="campaign-copy" rows="4" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono text-xs focus:border-amber-400 outline-none leading-relaxed">🔥 FLASH SALE: Trendmark Ultra Smart Watch v2!
+Original Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.
+Special Offer: KSh 3,500 only! Free delivery in Nairobi.
+Call/WhatsApp 0734570672 to order yours today! Limited stock available.</textarea>
+            </div>
+
+            <div class="sm:col-span-2 space-y-2">
+              <label class="font-extrabold text-slate-300">Product Image URL</label>
+              <input type="text" id="campaign-image" value="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono text-xs focus:border-amber-400 outline-none">
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button onclick="saveCampaign()" class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-xs shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:scale-105 transition flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Publish Today's Campaign
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 6. USER DIRECTORY TAB ================= -->
+      <section id="view-users" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-users text-teal-400"></i> User Directory
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">Manage all registered promoters, their active packages, and historical payouts</p>
+          </div>
+          <input type="text" id="users-search-input" oninput="filterUsersDirectory()" placeholder="Search phone or name..." class="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-amber-400">
+        </div>
+
+        <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-black/40 text-slate-400 font-extrabold uppercase text-[10px] tracking-wider border-b border-white/10">
+              <tr>
+                <th class="p-4">Subscriber</th>
+                <th class="p-4">Active Package</th>
+                <th class="p-4">Total Submissions</th>
+                <th class="p-4">Wallet Balance</th>
+                <th class="p-4">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5" id="users-table-body">
+              <tr class="hover:bg-white/5 transition">
+                <td class="p-4 font-bold text-white">Alice Wangari <span class="block text-[11px] font-mono text-slate-400">0721889900</span></td>
+                <td class="p-4"><span class="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold text-[10px]">Gold VIP</span></td>
+                <td class="p-4">18 campaigns</td>
+                <td class="p-4 font-black text-emerald-400">KSh 2,100.00</td>
+                <td class="p-4"><span class="text-emerald-400 font-bold">🟢 Active</span></td>
+              </tr>
+              <tr class="hover:bg-white/5 transition">
+                <td class="p-4 font-bold text-white">Brian Otieno <span class="block text-[11px] font-mono text-slate-400">0711445566</span></td>
+                <td class="p-4"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold text-[10px]">Silver</span></td>
+                <td class="p-4">12 campaigns</td>
+                <td class="p-4 font-black text-emerald-400">KSh 1,350.00</td>
+                <td class="p-4"><span class="text-emerald-400 font-bold">🟢 Active</span></td>
+              </tr>
+              <tr class="hover:bg-white/5 transition">
+                <td class="p-4 font-bold text-white">John Kamau <span class="block text-[11px] font-mono text-slate-400">0712345678</span></td>
+                <td class="p-4"><span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold text-[10px]">Silver</span></td>
+                <td class="p-4">4 campaigns</td>
+                <td class="p-4 font-black text-emerald-400">KSh 274.00</td>
+                <td class="p-4"><span class="text-emerald-400 font-bold">🟢 Active</span></td>
+              </tr>
+              <tr class="hover:bg-white/5 transition">
+                <td class="p-4 font-bold text-white">Mercy Muthoni <span class="block text-[11px] font-mono text-slate-400">0798765432</span></td>
+                <td class="p-4"><span class="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold text-[10px]">Gold VIP</span></td>
+                <td class="p-4">7 campaigns</td>
+                <td class="p-4 font-black text-emerald-400">KSh 857.50</td>
+                <td class="p-4"><span class="text-emerald-400 font-bold">🟢 Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Image Zoom Modal -->
+  <div id="image-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative max-w-2xl w-full glass-panel p-4 rounded-3xl space-y-3">
+      <div class="flex justify-between items-center pb-2 border-b border-white/10">
+        <h4 id="modal-image-title" class="font-bold text-white text-sm">Screenshot Proof Inspection</h4>
+        <button onclick="closeImageModal()" class="text-slate-400 hover:text-white text-lg font-bold">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <img id="modal-image-src" src="" class="w-full max-h-[70vh] object-contain rounded-2xl bg-black">
+      <div class="text-center text-slate-400 text-xs pt-1">
+        Inspect timestamp and contact count carefully before approval.
+      </div>
+    </div>
+  </div>
+
+  <!-- Process Payout Modal -->
+  <div id="pay-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full glass-panel p-6 rounded-3xl space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-white/10">
+        <h4 class="font-extrabold text-white text-base flex items-center gap-2">
+          <i class="fa-solid fa-mobile-screen-button text-emerald-400"></i> Process M-Pesa B2C Payout
+        </h4>
+        <button onclick="closePayModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-300">Recipient: <strong id="modal-pay-user" class="text-white"></strong></p>
+        <p class="text-slate-300">Phone: <strong id="modal-pay-phone" class="text-white font-mono"></strong></p>
+        <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl flex justify-between items-center">
+          <span class="text-emerald-300 font-bold">Payout Amount:</span>
+          <span id="modal-pay-amount" class="text-xl font-black text-emerald-400"></span>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-slate-400 text-[11px] font-bold">M-Pesa B2C Transaction Reference</label>
+          <input type="text" id="modal-b2c-ref" value="QK93B8801Z" class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 font-mono text-white text-xs outline-none focus:border-emerald-400">
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closePayModal()" class="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button onclick="confirmPayout()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
+          Confirm & Mark Paid
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching in Admin
+    function switchAdminTab(tab) {
+      const views = ['overview', 'withdrawals', 'reviews', 'activations', 'campaigns', 'users'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        const nav = document.getElementById('nav-' + v);
+        if (el) el.classList.add('hidden');
+        if (nav) nav.classList.remove('active');
+      });
+
+      const targetView = document.getElementById('view-' + tab);
+      const targetNav = document.getElementById('nav-' + tab);
+      if (targetView) targetView.classList.remove('hidden');
+      if (targetNav) targetNav.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Active withdrawals filter state
+    let activeWithdrawalFilter = 'all';
+
+    function filterWithdrawals(status) {
+      activeWithdrawalFilter = status;
+      ['all', 'pending', 'completed'].forEach(s => {
+        const btn = document.getElementById('w-filter-' + s);
+        if (btn) {
+          if (s === status) {
+            btn.className = "px-4 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30";
+          } else {
+            btn.className = "px-4 py-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white";
+          }
+        }
+      });
+      renderWithdrawalsTable();
+    }
+
+    // Modal Image Preview
+    function previewImage(src, title) {
+      document.getElementById('modal-image-src').src = src;
+      document.getElementById('modal-image-title').innerText = title;
+      document.getElementById('image-modal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('image-modal').classList.add('hidden');
+    }
+
+    // Payout Modal
+    let currentPayWthId = null;
+    function openPayModal(wthId, user, phone, amount) {
+      currentPayWthId = wthId;
+      document.getElementById('modal-pay-user').innerText = user;
+      document.getElementById('modal-pay-phone').innerText = phone;
+      document.getElementById('modal-pay-amount').innerText = 'KSh ' + amount.toFixed(2);
+      document.getElementById('pay-modal').classList.remove('hidden');
+    }
+
+    function closePayModal() {
+      document.getElementById('pay-modal').classList.add('hidden');
+    }
+
+    function confirmPayout() {
+      if (!currentPayWthId) return;
+      const ref = document.getElementById('modal-b2c-ref').value.trim() || ('QK' + Math.random().toString(36).substr(2, 7).toUpperCase());
+      const res = TrendmarkDB.approveWithdrawal(currentPayWthId, ref);
+      if (res.success) {
+        alert(`M-Pesa Payout executed successfully with Ref: ${res.refCode}! Notification SMS dispatched.`);
+        closePayModal();
+        renderAdminDashboard();
+      }
+    }
+
+    function processBatchPayroll() {
+      const withdrawals = TrendmarkDB.getAllWithdrawals().filter(w => w.status === 'PENDING');
+      if (withdrawals.length === 0) {
+        alert("No pending withdrawal requests in the queue.");
+        return;
+      }
+      if (confirm(`Execute batch M-Pesa B2C payroll for ${withdrawals.length} pending requests?`)) {
+        const count = TrendmarkDB.batchApproveWithdrawals();
+        alert(`Batch payroll of ${count} transactions successfully processed via Safaricom Daraja API!`);
+        renderAdminDashboard();
+      }
+    }
+
+    // Review Approvals
+    function approveReview(subId, name, reward) {
+      if (TrendmarkDB.approveSubmission(subId)) {
+        alert(`Proof from ${name} approved! Credited KSh ${reward.toFixed(2)} to user's wallet.`);
+        renderAdminDashboard();
+      }
+    }
+
+    function rejectReview(subId, name) {
+      const reason = prompt(`Reason for rejecting submission from ${name}:`, "Blurry screenshot / Views count not visible");
+      if (reason) {
+        TrendmarkDB.rejectSubmission(subId, reason);
+        alert(`Submission from ${name} rejected.`);
+        renderAdminDashboard();
+      }
+    }
+
+    // Package Activations
+    function approveActivation(actId, user, pkg) {
+      if (TrendmarkDB.approveActivation(actId)) {
+        alert(`Payment verified! ${user}'s ${pkg} has been activated. Access to products and daily campaigns granted.`);
+        renderAdminDashboard();
+      }
+    }
+
+    function rejectActivation(actId, user) {
+      if (confirm(`Reject payment reference for ${user}?`)) {
+        TrendmarkDB.rejectActivation(actId);
+        alert(`Activation request for ${user} rejected.`);
+        renderAdminDashboard();
+      }
+    }
+
+    function filterUsersDirectory() {
+      const query = (document.getElementById('users-search-input').value || '').toLowerCase();
+      const users = TrendmarkDB.getAllUsers();
+      const filtered = users.filter(u => u.name.toLowerCase().includes(query) || u.phone.includes(query));
+      renderUsersTable(filtered);
+    }
+
+    function saveCampaign() {
+      const title = document.getElementById('campaign-title').value;
+      const price = parseFloat(document.getElementById('campaign-price').value) || 0;
+      const copy = document.getElementById('campaign-copy').value;
+      const image = document.getElementById('campaign-image').value;
+
+      TrendmarkDB.saveCampaign({ title, price, copy, image });
+      alert(`Campaign for "${title}" published live! Promoters can now see it on their dashboard.`);
+    }
+
+    function exportDataReport() {
+      const withdrawals = TrendmarkDB.getAllWithdrawals();
+      const users = TrendmarkDB.getUsers();
+      let csv = "ID,Name,Phone,Package,Amount,Status,RefCode,Date\n";
+      withdrawals.forEach(w => {
+        csv += `"${w.id}","${w.userName}","${w.userPhone}","${w.package}",${w.amount},"${w.status}","${w.refCode || ''}","${w.requestedAt}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trendmark_payroll_report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    /* ---- MAIN RENDER ENGINE FOR ADMIN ---- */
+    function renderAdminDashboard() {
+      const users = TrendmarkDB.getAllUsers();
+      const withdrawals = TrendmarkDB.getAllWithdrawals();
+      const submissions = TrendmarkDB.getAllSubmissions();
+      const activations = TrendmarkDB.getAllActivations();
+      const campaign = TrendmarkDB.getCampaign();
+
+      // 1. KPI Calculations
+      const pendingW = withdrawals.filter(w => w.status === 'PENDING');
+      const completedW = withdrawals.filter(w => w.status === 'COMPLETED');
+      const pendingSub = submissions.filter(s => s.status === 'PENDING');
+      const pendingAct = activations.filter(a => a.status === 'PENDING');
+
+      const pendingWTotal = pendingW.reduce((sum, w) => sum + (w.amount || 0), 0);
+      const completedWTotal = completedW.reduce((sum, w) => sum + (w.amount || 0), 0);
+
+      document.getElementById('kpi-pending-withdrawals').innerText = `KSh ${pendingWTotal.toFixed(2)}`;
+      document.getElementById('kpi-completed-withdrawals').innerText = `KSh ${completedWTotal.toFixed(2)}`;
+      document.getElementById('kpi-pending-reviews').innerText = `${pendingSub.length} Pending`;
+
+      // Badges
+      const badgeW = document.getElementById('badge-pending-withdrawals');
+      if (badgeW) badgeW.innerText = `${pendingW.length} Pending`;
+
+      const badgeR = document.getElementById('badge-pending-reviews');
+      if (badgeR) badgeR.innerText = `${pendingSub.length} Proofs`;
+
+      const badgeA = document.getElementById('badge-pending-activations');
+      if (badgeA) badgeA.innerText = `${pendingAct.length} New`;
+
+      // 2. Overview Quick Lists
+      const quickWList = document.getElementById('quick-withdrawals-list');
+      if (quickWList) {
+        if (pendingW.length === 0) {
+          quickWList.innerHTML = `<p class="text-slate-500 text-xs py-2">No pending withdrawal requests.</p>`;
+        } else {
+          quickWList.innerHTML = pendingW.slice(0, 3).map(w => `
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+              <div>
+                <p class="font-extrabold text-white">${w.userName}</p>
+                <p class="text-slate-400 font-mono text-[11px]">${w.userPhone} &bull; ${w.package}</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-emerald-400 text-sm">KSh ${w.amount.toFixed(2)}</span>
+                <p class="text-[10px] text-amber-400 font-bold">M-Pesa Pending</p>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      const quickRList = document.getElementById('quick-reviews-list');
+      if (quickRList) {
+        if (pendingSub.length === 0) {
+          quickRList.innerHTML = `<p class="text-slate-500 text-xs py-2">No pending screenshot reviews.</p>`;
+        } else {
+          quickRList.innerHTML = pendingSub.slice(0, 3).map(s => `
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between text-xs">
+              <div>
+                <p class="font-extrabold text-white">${s.userName}</p>
+                <p class="text-slate-400 font-mono text-[11px]">${s.userPhone} &bull; OCR: ${s.views} Views</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-sky-400 text-sm">KSh ${s.reward.toFixed(2)}</span>
+                <p class="text-[10px] text-sky-300 font-bold">Ready to credit</p>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 3. Render Withdrawals Table
+      renderWithdrawalsTable();
+
+      // 4. Render Screenshot Reviews Queue
+      renderReviewsQueue();
+
+      // 5. Render Package Activations Queue
+      renderActivationsQueue();
+
+      // 6. Render Users Directory
+      renderUsersTable(users);
+
+      // 7. Load Campaign Form Values
+      if (campaign) {
+        const t = document.getElementById('campaign-title');
+        const p = document.getElementById('campaign-price');
+        const c = document.getElementById('campaign-copy');
+        const i = document.getElementById('campaign-image');
+        if (t && p && c && i) {
+          t.value = campaign.title || '';
+          p.value = campaign.price || 3500;
+          c.value = campaign.copy || '';
+          i.value = campaign.image || '';
+        }
+      }
+    }
+
+    function renderWithdrawalsTable() {
+      const withdrawals = TrendmarkDB.getAllWithdrawals();
+      const tbody = document.getElementById('withdrawals-table-body');
+      if (!tbody) return;
+
+      const filtered = withdrawals.filter(w => {
+        if (activeWithdrawalFilter === 'all') return true;
+        return w.status.toLowerCase() === activeWithdrawalFilter.toLowerCase();
+      });
+
+      // Update sub-tab counts
+      document.getElementById('count-all-w').innerText = withdrawals.length;
+      document.getElementById('count-pending-w').innerText = withdrawals.filter(w => w.status === 'PENDING').length;
+      document.getElementById('count-completed-w').innerText = withdrawals.filter(w => w.status === 'COMPLETED').length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No withdrawal records matching filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(w => {
+        const isPending = (w.status === 'PENDING');
+        return `
+          <tr class="hover:bg-white/5 transition withdrawal-row" data-status="${w.status.toLowerCase()}">
+            <td class="p-4">
+              <div class="font-extrabold text-white text-sm">${w.userName}</div>
+              <div class="text-[11px] font-mono text-slate-400">${w.userPhone}</div>
+            </td>
+            <td class="p-4">
+              <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold text-[10px]">${w.package}</span>
+            </td>
+            <td class="p-4 font-black ${isPending ? 'text-emerald-400' : 'text-white'} text-sm">KSh ${w.amount.toFixed(2)}</td>
+            <td class="p-4 text-slate-400">${w.requestedAt}</td>
+            <td class="p-4">
+              ${isPending ? `
+                <span class="status-badge bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Pending Payment
+                </span>
+              ` : `
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full font-extrabold text-[10px] flex items-center gap-1 w-max">
+                  <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed (${w.refCode || 'PAID'})
+                </span>
+              `}
+            </td>
+            <td class="p-4 text-right">
+              ${isPending ? `
+                <button onclick="openPayModal('${w.id}', '${w.userName}', '${w.userPhone}', ${w.amount})" class="action-btn px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs shadow transition">
+                  Process M-Pesa Pay
+                </button>
+              ` : `
+                <span class="text-slate-500 text-[11px]">Paid via B2C</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderReviewsQueue() {
+      const container = document.getElementById('reviews-queue-container');
+      if (!container) return;
+      const submissions = TrendmarkDB.getAllSubmissions().filter(s => s.status === 'PENDING');
+
+      if (submissions.length === 0) {
+        container.innerHTML = `<div class="glass-panel p-8 rounded-3xl text-center text-slate-400 text-xs">🎉 All screenshot submissions have been audited! No pending reviews in queue.</div>`;
+        return;
+      }
+
+      container.innerHTML = submissions.map(s => `
+        <div class="glass-panel p-6 rounded-3xl space-y-4 border border-white/10" id="sub-card-${s.id}">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-white font-black text-base">${s.userName}</span>
+              <span class="text-slate-400 font-mono text-xs ml-2">${s.userPhone}</span>
+              <span class="ml-2 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded">${s.package} (KSh ${s.rate.toFixed(2)}/view)</span>
+            </div>
+            <span class="text-xs text-slate-400">Submitted ${s.submittedAt}</span>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-5 items-center">
+            <div class="relative group rounded-2xl overflow-hidden border border-white/10 bg-slate-950 aspect-video flex items-center justify-center cursor-pointer" onclick="previewImage('${s.imageUrl}', '${s.userName} - WhatsApp Status')">
+              <img src="${s.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold gap-2 transition">
+                <i class="fa-solid fa-magnifying-glass-plus text-base text-amber-400"></i> Zoom Screenshot
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs">
+              <p class="text-[10px] text-sky-400 uppercase font-extrabold tracking-wider">Automated OCR Output</p>
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5 space-y-1 font-mono">
+                <p class="text-emerald-400 font-black text-sm">Detected: ${s.views} Views</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-[11px]">Rate: <strong>KSh ${s.rate.toFixed(2)}</strong></span>
+                <span class="text-slate-400 text-[11px]">&bull;</span>
+                <span class="text-amber-300 text-[11px] font-black">Reward: ${s.views} × ${s.rate.toFixed(2)} = KSh ${s.reward.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div class="flex sm:flex-col gap-2 justify-center">
+              <button onclick="approveReview('${s.id}', '${s.userName}', ${s.reward})" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check"></i> Approve & Credit KSh ${s.reward.toFixed(2)}
+              </button>
+              <button onclick="rejectReview('${s.id}', '${s.userName}')" class="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-xmark"></i> Reject Submission
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderActivationsQueue() {
+      const container = document.getElementById('activations-container');
+      if (!container) return;
+      const activations = TrendmarkDB.getAllActivations().filter(a => a.status === 'PENDING');
+
+      if (activations.length === 0) {
+        container.innerHTML = `<div class="glass-panel p-8 rounded-3xl text-center text-slate-400 text-xs">✅ No pending M-Pesa package activations. All subscriber payments verified!</div>`;
+        return;
+      }
+
+      container.innerHTML = activations.map(a => `
+        <div class="glass-panel p-6 rounded-3xl space-y-4 border border-white/10" id="act-row-${a.id}">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="font-black text-white text-base">${a.userName}</span>
+              <span class="text-slate-400 font-mono text-xs ml-2">${a.userPhone}</span>
+            </div>
+            <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold px-3 py-1 rounded-full">
+              Selected: ${a.package} (KSh ${a.price})
+            </span>
+          </div>
+          
+          <div class="bg-black/50 p-4 rounded-2xl border border-white/5 space-y-2 text-xs">
+            <p class="text-[10px] text-slate-400 uppercase font-extrabold">Submitted M-Pesa SMS Confirmation:</p>
+            <p class="font-mono text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5 leading-relaxed">
+              "${a.smsMessage}"
+            </p>
+            <div class="flex items-center gap-4 text-emerald-400 font-bold text-xs pt-1">
+              <span><i class="fa-solid fa-check"></i> Code: ${a.mpesaCode}</span>
+              <span><i class="fa-solid fa-check"></i> SIM Match: 0734570672</span>
+              <span><i class="fa-solid fa-check"></i> Amount: KSh ${a.price}</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button onclick="rejectActivation('${a.id}', '${a.userName}')" class="px-4 py-2 bg-red-500/20 text-red-300 hover:bg-red-500/30 font-bold rounded-xl text-xs transition">
+              Reject Reference
+            </button>
+            <button onclick="approveActivation('${a.id}', '${a.userName}', '${a.package}')" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition flex items-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Verify & Activate Package
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderUsersTable(usersList) {
+      const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+
+      if (usersList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No users found matching query.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = usersList.map(u => {
+        const isActive = (u.status === 'ACTIVE');
+        const isPending = (u.status === 'PENDING');
+        return `
+          <tr class="hover:bg-white/5 transition">
+            <td class="p-4 font-bold text-white">
+              ${u.name}
+              <span class="block text-[11px] font-mono text-slate-400">${u.phone}</span>
+            </td>
+            <td class="p-4">
+              ${u.package ? `
+                <span class="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold text-[10px]">${u.package}</span>
+              ` : `
+                <span class="text-slate-500 text-[10px]">None</span>
+              `}
+            </td>
+            <td class="p-4 text-slate-400 font-mono text-xs">Registered ${u.createdAt}</td>
+            <td class="p-4 font-black ${isActive ? 'text-emerald-400' : 'text-slate-400'}">KSh ${(u.walletBalance || 0).toFixed(2)}</td>
+            <td class="p-4">
+              ${isActive ? `<span class="text-emerald-400 font-bold">🟢 Active</span>` :
+                isPending ? `<span class="text-amber-400 font-bold">⏳ Pending Review</span>` :
+                `<span class="text-slate-500 font-bold">⚪ Inactive</span>`}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Admin Authentication Security Guard
+    function checkAdminAuth() {
+      const isAuth = TrendmarkDB.isAdminAuthenticated();
+      const authGate = document.getElementById('admin-auth-gate');
+      const mainContainer = document.getElementById('admin-main-container');
+      const logoutBtn = document.getElementById('admin-logout-btn');
+      const adminNameDisplay = document.getElementById('admin-name-display');
+
+      if (isAuth) {
+        if (authGate) authGate.classList.add('hidden');
+        if (mainContainer) mainContainer.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        const adminUser = TrendmarkDB.getAdminUser();
+        if (adminNameDisplay) adminNameDisplay.innerText = `Master Admin (${adminUser ? adminUser.phone : '0734570672'})`;
+        renderAdminDashboard();
+      } else {
+        if (authGate) authGate.classList.remove('hidden');
+        if (mainContainer) mainContainer.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        if (adminNameDisplay) adminNameDisplay.innerText = `Admin Access Locked`;
+
+        // Check if a client user is logged in
+        const clientUser = TrendmarkDB.getCurrentUser();
+        const clientNotice = document.getElementById('admin-client-notice');
+        if (clientNotice) {
+          if (clientUser) {
+            clientNotice.innerHTML = `
+              <div class="bg-amber-500/10 border border-amber-500/30 p-3.5 rounded-2xl text-xs space-y-2 mb-4">
+                <p class="text-amber-300 font-extrabold flex items-center gap-2">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Signed in as Client: <strong>${clientUser.name} (${clientUser.phone})</strong>
+                </p>
+                <p class="text-slate-300 text-[11px] leading-relaxed">Your account is a normal client promoter account. You do NOT have administrative authority to access the Central Admin Dashboard.</p>
+                <a href="index.html" class="inline-block bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl font-black text-[11px] transition shadow">
+                  Return to My Client Dashboard →
+                </a>
+              </div>
+            `;
+            clientNotice.classList.remove('hidden');
+          } else {
+            clientNotice.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-id-input').value;
+      const pass = document.getElementById('admin-pass-input').value;
+      const res = TrendmarkDB.loginAdmin(id, pass);
+      if (res.success) {
+        checkAdminAuth();
+      } else {
+        alert(res.message);
+      }
+    }
+
+    function quickAdminLogin() {
+      const res = TrendmarkDB.loginAdmin('0734570672', 'admin123');
+      if (res.success) {
+        checkAdminAuth();
+      }
+    }
+
+    function handleAdminSignOut() {
+      if (confirm('Sign out of Central Admin Dashboard?')) {
+        TrendmarkDB.logoutAdmin();
+        checkAdminAuth();
+      }
+    }
+
+    // Sync in real-time when user performs actions on index.html
+    window.addEventListener('storage', () => {
+      if (TrendmarkDB.isAdminAuthenticated()) {
+        renderAdminDashboard();
+      } else {
+        checkAdminAuth();
+      }
+    });
+
+    window.addEventListener('load', () => {
+      checkAdminAuth();
+    });
+  </script>
+</body>
+</html>

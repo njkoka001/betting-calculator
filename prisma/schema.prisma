@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  fullName        String
+  phone           String   @unique
+  whatsappNumber  String
+  email           String?
+  mpesaNumber     String
+  passwordHash    String
+  role            String   @default("USER") // USER, ADMIN
+  profileComplete Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userPackages UserPackage[]
+  payments     PaymentTransaction[]
+  submissions  Submission[]
+  walletLedger WalletTransaction[]
+  payouts      Payout[]
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  name        String   // Bronze, Silver, Gold
+  price       Float    // 300, 500, 1000
+  ratePerView Float    // 1.0, 2.0, 3.5
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userPackages UserPackage[]
+}
+
+model UserPackage {
+  id          String    @id @default(uuid())
+  userId      String
+  packageId   String
+  status      String    @default("PENDING") // PENDING, ACTIVE, EXPIRED, CANCELLED
+  activatedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+}
+
+model PaymentTransaction {
+  id                   String    @id @default(uuid())
+  userId               String
+  packageId            String
+  amount               Float
+  transactionReference String    // M-Pesa reference code e.g. QK87123456
+  status               String    @default("PENDING") // PENDING, VERIFIED, REJECTED
+  createdAt            DateTime  @default(now())
+  verifiedAt           DateTime?
+  verifiedBy           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  image       String
+  category    String
+  stock       Int      @default(50)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id           String   @id @default(uuid())
+  productId    String
+  campaignDate String   @unique // Format: YYYY-MM-DD e.g. 2026-09-08
+  promoText    String
+  status       String   @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED
+  createdAt    DateTime @default(now())
+
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+}
+
+model Submission {
+  id            String    @id @default(uuid())
+  userId        String
+  campaignId    String
+  imageUrl      String
+  detectedViews Int       @default(0)
+  approvedViews Int?
+  status        String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  adminNote     String?
+  submittedAt   DateTime  @default(now())
+  reviewedAt    DateTime?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  earning  Earning?
+}
+
+model Earning {
+  id            String   @id @default(uuid())
+  submissionId  String   @unique
+  approvedViews Int
+  rate          Float
+  amount        Float
+  createdAt     DateTime @default(now())
+
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+model WalletTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // REWARD, PAYOUT, REFUND
+  amount      Float    // Positive for REWARD, Negative for PAYOUT
+  balance     Float
+  description String
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payout {
+  id           String    @id @default(uuid())
+  userId       String
+  amount       Float
+  mpesaNumber  String
+  mpesaRefCode String?
+  status       String    @default("PENDING") // PENDING, PROCESSING, PAID, REJECTED
+  createdAt    DateTime  @default(now())
+  processedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
