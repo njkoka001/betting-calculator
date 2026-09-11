@@ -53,7 +53,7 @@
       </div>
 
         <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="hidden text-sky-400 font-extrabold flex items-center gap-1.5 py-1 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 hover:bg-sky-500/20 transition">
-          <i class="fa-solid fa-gauge-high"></i> My Dashboard
+          <i class="fa-solid fa-user-check text-sky-400"></i> My Promoter Account
         </button>
         <button onclick="switchTab('home')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
           <i class="fa-solid fa-house text-sky-400"></i> Home
@@ -67,6 +67,7 @@
         <button onclick="switchTab('wallet')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
           <i class="fa-solid fa-wallet text-indigo-400"></i> My Wallet
         </button>
+        <a href="admin.html" id="nav-btn-admin-portal" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black px-3.5 py-1 rounded-full text-xs flex items-center gap-1.5 shadow transition hover:scale-105"><i class="fa-solid fa-shield-halved"></i> Central Admin Portal</a>
         <button onclick="switchTab('submit-proof')" id="nav-btn-submit-proof" class="hidden text-amber-300 font-extrabold flex items-center gap-1.5 py-1 bg-amber-500/10 px-3 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition">
           <i class="fa-solid fa-camera-retro"></i> Submit Proof
         </button>
@@ -970,6 +971,7 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
       const navLockIcon = document.getElementById('nav-lock-icon');
       const navDashBtn = document.getElementById('nav-btn-dashboard');
       const navSubmitBtn = document.getElementById('nav-btn-submit-proof');
+      const navAdminPortalBtn = document.getElementById('nav-btn-admin-portal');
 
       const productsLockedBanner = document.getElementById('products-locked-banner');
       const productsUnlockedGrid = document.getElementById('products-unlocked-grid');
@@ -980,6 +982,7 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
         // GUEST STATE
         if (navDashBtn) navDashBtn.classList.add('hidden');
         if (navSubmitBtn) navSubmitBtn.classList.add('hidden');
+        if (navAdminPortalBtn) navAdminPortalBtn.classList.add('hidden');
         statusBadge.className = "text-xs bg-white/5 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl font-bold border border-white/10 flex items-center gap-1.5 cursor-pointer";
         statusBadge.innerHTML = `<i class="fa-solid fa-user-lock text-amber-400"></i> Guest Mode`;
         statusBadge.onclick = () => openAuthModal('login');
@@ -1042,12 +1045,27 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
           if (navSubmitBtn) navSubmitBtn.classList.add('hidden'); // Hide for inactive
         }
 
+        const isMasterAdmin = (user.phone === '0734570672');
+        if (navAdminPortalBtn) {
+          if (isMasterAdmin) {
+            navAdminPortalBtn.classList.remove('hidden');
+          } else {
+            navAdminPortalBtn.classList.add('hidden');
+          }
+        }
+
         userControls.innerHTML = `
-          <button onclick="switchTab('dashboard')" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-xl text-xs transition">
-            <i class="fa-solid fa-user text-sky-400"></i>
-            <span class="font-extrabold text-white">${user.name.split(' ')[0]}</span>
-            <span class="text-[10px] text-slate-400 font-mono">(${user.phone})</span>
-          </button>
+          ${isMasterAdmin ? `
+            <a href="admin.html" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded-xl text-xs font-black shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-shield-halved"></i> Admin Portal
+            </a>
+          ` : `
+            <button onclick="switchTab('dashboard')" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-xl text-xs transition">
+              <i class="fa-solid fa-user text-sky-400"></i>
+              <span class="font-extrabold text-white">${user.name.split(' ')[0]}</span>
+              <span class="text-[10px] text-slate-400 font-mono">(${user.phone})</span>
+            </button>
+          `}
           <button onclick="handleSignOut()" title="Sign Out" class="p-2 text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-xl text-xs transition">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
@@ -1406,6 +1424,11 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
       const res = TrendmarkDB.loginUser(phone, pass);
       if (res.success) {
         closeAuthModal();
+        if (res.isAdmin) {
+          alert('Welcome, Master Administrator! Redirecting to Central Admin Dashboard...');
+          window.location.href = 'admin.html';
+          return;
+        }
         renderUserState();
         alert(`Welcome back, ${res.user.name}!`);
       } else {
@@ -1499,19 +1522,7 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
           Sign In to Account →
         </button>
 
-        <!-- Quick Demo Switcher -->
-        <div class="pt-2 border-t border-white/10 space-y-1.5">
-          <p class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider">Quick Demo Login (Pre-activated):</p>
-          <div class="grid grid-cols-2 gap-2 text-[10px]">
-            <button type="button" onclick="quickLogin('0712345678')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-300 border border-white/5 text-left truncate">
-              <strong>John Kamau</strong> (Silver)
-            </button>
-            <button type="button" onclick="quickLogin('0721889900')" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-300 border border-white/5 text-left truncate">
-              <strong>Alice Wangari</strong> (Gold)
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
 
       <!-- REGISTER FORM -->
       <form id="form-register" onsubmit="handleAuthRegister(event)" class="hidden space-y-4 text-xs">

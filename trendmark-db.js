@@ -309,10 +309,18 @@
 
     isAdminAuthenticated: function () {
       const session = getStorage(DB_KEYS.ADMIN_SESSION, null);
-      return session && session.role === 'ADMIN';
+      if (!session || session.role !== 'ADMIN') return false;
+
+      // If a client user is active, they can only be admin if phone matches MASTER_ADMIN
+      const clientPhone = localStorage.getItem(DB_KEYS.CLIENT_SESSION);
+      if (clientPhone && clientPhone !== MASTER_ADMIN.phone) {
+        return false;
+      }
+      return true;
     },
 
     getAdminUser: function () {
+      if (!this.isAdminAuthenticated()) return null;
       return getStorage(DB_KEYS.ADMIN_SESSION, null);
     },
 
@@ -333,8 +341,11 @@
     },
 
     registerUser: function (name, phone, password) {
-      const users = this.getUsers();
       const cleanPhone = phone.trim().replace(/\s+/g, '');
+      if (cleanPhone === MASTER_ADMIN.phone) {
+        return { success: false, message: 'This phone number is reserved for Trendmark Master Administration.' };
+      }
+      const users = this.getUsers();
       if (users.some(u => u.phone === cleanPhone)) {
         return { success: false, message: 'An account with this phone number already exists.' };
       }
@@ -352,12 +363,35 @@
       };
       users.unshift(newUser);
       setStorage(DB_KEYS.USERS, users);
+
+      // Clear any existing admin privileges for new client
+      localStorage.removeItem(DB_KEYS.ADMIN_SESSION);
       this.setSession(cleanPhone);
       return { success: true, user: newUser };
     },
 
     loginUser: function (phone, password) {
-      const cleanPhone = phone.trim().replace(/\s+/g, '');
+      const cleanPhone = (phone || '').trim().replace(/\s+/g, '');
+      const cleanPass = (password || '').trim();
+
+      // Check if credentials belong to MASTER ADMIN
+      const isMasterAdmin = (
+        (cleanPhone === MASTER_ADMIN.phone || cleanPhone.toLowerCase() === 'admin' || cleanPhone === MASTER_ADMIN.username) &&
+        (cleanPass === MASTER_ADMIN.password || cleanPass === MASTER_ADMIN.pin)
+      );
+
+      if (isMasterAdmin) {
+        this.loginAdmin(cleanPhone, cleanPass);
+        // Also register session phone for header display if needed
+        localStorage.setItem(DB_KEYS.CLIENT_SESSION, MASTER_ADMIN.phone);
+        return { 
+          success: true, 
+          isAdmin: true, 
+          user: { ...MASTER_ADMIN, walletBalance: 0 } 
+        };
+      }
+
+      // Normal Client Authentication
       const user = this.getUser(cleanPhone);
       if (!user) {
         return { success: false, message: 'Account not found. Please register first.' };
@@ -365,8 +399,11 @@
       if (user.password !== password) {
         return { success: false, message: 'Invalid password. Please check and try again.' };
       }
+
+      // CRITICAL: Normal client login immediately strips any Admin session
+      localStorage.removeItem(DB_KEYS.ADMIN_SESSION);
       this.setSession(cleanPhone);
-      return { success: true, user: user };
+      return { success: true, isAdmin: false, user: user };
     },
 
     setSession: function (phone) {
@@ -380,11 +417,15 @@
     getCurrentUser: function () {
       const phone = this.getSessionPhone();
       if (!phone) return null;
+      if (phone === MASTER_ADMIN.phone) {
+        return { ...MASTER_ADMIN, walletBalance: 0 };
+      }
       return this.getUser(phone);
     },
 
     logout: function () {
       localStorage.removeItem(DB_KEYS.CLIENT_SESSION);
+      localStorage.removeItem(DB_KEYS.ADMIN_SESSION);
     },
 
     updateUser: function (phone, updates) {

@@ -99,14 +99,14 @@
       <div id="admin-client-notice" class="hidden text-left"></div>
 
       <!-- Admin Login Form -->
-      <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-xs text-left">
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="space-y-4 text-xs text-left">
         <div class="space-y-1.5">
           <label class="text-slate-300 font-bold">Administrator Phone / ID</label>
-          <input type="text" id="admin-id-input" value="0734570672" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono outline-none focus:border-amber-400">
+          <input type="text" id="admin-id-input" placeholder="0734570672" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white font-mono outline-none focus:border-amber-400">
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-slate-300 font-bold">Master Password / PIN</label>
+          <label class="text-slate-300 font-bold">Master Password / Security PIN</label>
           <input type="password" id="admin-pass-input" placeholder="••••••••" required class="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-amber-400">
         </div>
 
@@ -114,11 +114,9 @@
           Authorize Admin Access →
         </button>
 
-        <div class="pt-2 border-t border-white/10 text-center">
-          <button type="button" onclick="quickAdminLogin()" class="text-[11px] text-amber-300 hover:underline font-bold">
-            ⚡ Quick Demo Admin Login (0734570672 / admin123)
-          </button>
-        </div>
+        <p class="text-[11px] text-slate-500 text-center">
+          <i class="fa-solid fa-lock text-amber-400"></i> Encrypted Administrator Authentication
+        </p>
       </form>
     </div>
   </div>
@@ -1093,46 +1091,73 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</textare
     // Admin Authentication Security Guard
     function checkAdminAuth() {
       const isAuth = TrendmarkDB.isAdminAuthenticated();
+      const clientUser = TrendmarkDB.getCurrentUser();
       const authGate = document.getElementById('admin-auth-gate');
       const mainContainer = document.getElementById('admin-main-container');
       const logoutBtn = document.getElementById('admin-logout-btn');
       const adminNameDisplay = document.getElementById('admin-name-display');
+      const clientNotice = document.getElementById('admin-client-notice');
+      const adminForm = document.getElementById('admin-login-form');
 
+      // 1. HARD SECURITY BLOCK: If a normal client is logged in, forbid admin dashboard!
+      if (clientUser && clientUser.phone !== '0734570672') {
+        if (authGate) authGate.classList.remove('hidden');
+        if (mainContainer) mainContainer.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        if (adminForm) adminForm.classList.add('hidden');
+        if (adminNameDisplay) adminNameDisplay.innerText = 'Access Restricted';
+
+        if (clientNotice) {
+          clientNotice.innerHTML = `
+            <div class="bg-red-500/15 border border-red-500/40 p-5 rounded-2xl text-xs space-y-3 mb-4 text-left">
+              <div class="flex items-center gap-2 text-red-400 font-black text-sm">
+                <i class="fa-solid fa-ban"></i> ACCESS DENIED: CLIENT ACCOUNT DETECTED
+              </div>
+              <p class="text-slate-200 leading-relaxed">
+                You are currently signed in as client: <strong class="text-white">${clientUser.name}</strong> (${clientUser.phone}).
+              </p>
+              <p class="text-slate-400 text-[11px] leading-relaxed">
+                The Central Admin Dashboard is exclusively reserved for Platform Administrators (0734570672). Client accounts cannot access or manage administrative operations, OCR audits, or payroll.
+              </p>
+              <div class="pt-2 flex flex-wrap gap-2">
+                <a href="index.html" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs transition shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-left"></i> Return to My User Portal
+                </a>
+                <button onclick="handleClientSignOutFromAdmin()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs border border-white/10 transition">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          `;
+          clientNotice.classList.remove('hidden');
+        }
+        return;
+      }
+
+      // 2. Authenticated Administrator
       if (isAuth) {
         if (authGate) authGate.classList.add('hidden');
         if (mainContainer) mainContainer.classList.remove('hidden');
         if (logoutBtn) logoutBtn.classList.remove('hidden');
+        if (adminForm) adminForm.classList.add('hidden');
+        if (clientNotice) clientNotice.classList.add('hidden');
         const adminUser = TrendmarkDB.getAdminUser();
         if (adminNameDisplay) adminNameDisplay.innerText = `Master Admin (${adminUser ? adminUser.phone : '0734570672'})`;
         renderAdminDashboard();
       } else {
+        // 3. Unauthenticated guest: show admin login form
         if (authGate) authGate.classList.remove('hidden');
         if (mainContainer) mainContainer.classList.add('hidden');
         if (logoutBtn) logoutBtn.classList.add('hidden');
-        if (adminNameDisplay) adminNameDisplay.innerText = `Admin Access Locked`;
-
-        // Check if a client user is logged in
-        const clientUser = TrendmarkDB.getCurrentUser();
-        const clientNotice = document.getElementById('admin-client-notice');
-        if (clientNotice) {
-          if (clientUser) {
-            clientNotice.innerHTML = `
-              <div class="bg-amber-500/10 border border-amber-500/30 p-3.5 rounded-2xl text-xs space-y-2 mb-4">
-                <p class="text-amber-300 font-extrabold flex items-center gap-2">
-                  <i class="fa-solid fa-triangle-exclamation"></i> Signed in as Client: <strong>${clientUser.name} (${clientUser.phone})</strong>
-                </p>
-                <p class="text-slate-300 text-[11px] leading-relaxed">Your account is a normal client promoter account. You do NOT have administrative authority to access the Central Admin Dashboard.</p>
-                <a href="index.html" class="inline-block bg-sky-500 hover:bg-sky-400 text-slate-950 px-3.5 py-1.5 rounded-xl font-black text-[11px] transition shadow">
-                  Return to My Client Dashboard →
-                </a>
-              </div>
-            `;
-            clientNotice.classList.remove('hidden');
-          } else {
-            clientNotice.classList.add('hidden');
-          }
-        }
+        if (adminForm) adminForm.classList.remove('hidden');
+        if (clientNotice) clientNotice.classList.add('hidden');
+        if (adminNameDisplay) adminNameDisplay.innerText = 'Admin Security Gate';
       }
+    }
+
+    function handleClientSignOutFromAdmin() {
+      TrendmarkDB.logout();
+      checkAdminAuth();
     }
 
     function handleAdminLogin(e) {
