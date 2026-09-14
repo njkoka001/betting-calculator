@@ -47,33 +47,55 @@ export default async function CampaignPage() {
     )
   }
 
-  // Fetch today's campaign (e.g. 2026-09-08 or latest ACTIVE campaign)
-  const todayStr = '2026-09-08'
+  // 24h & Post-Submission Dynamic Product Rotation Logic:
+  // Find all campaign IDs already submitted by this user
+  const userSubmissions = await prisma.submission.findMany({
+    where: { userId: user.id },
+    select: { campaignId: true },
+  })
+  const submittedCampaignIds = Array.from(new Set(userSubmissions.map((s) => s.campaignId)))
+
+  // Find an active campaign that the user has NOT submitted yet
   let campaign = await prisma.campaign.findFirst({
-    where: { campaignDate: todayStr, status: 'ACTIVE' },
+    where: {
+      status: 'ACTIVE',
+      id: { notIn: submittedCampaignIds },
+    },
     include: { product: true },
+    orderBy: { createdAt: 'desc' },
   })
 
+  // If user has submitted the existing campaign(s), auto-generate a fresh campaign with a different product!
   if (!campaign) {
-    campaign = await prisma.campaign.findFirst({
-      where: { status: 'ACTIVE' },
-      include: { product: true },
-      orderBy: { createdAt: 'desc' },
-    })
+    const allProducts = await prisma.product.findMany({ where: { active: true } })
+    if (allProducts.length > 0) {
+      const nextProduct = allProducts[submittedCampaignIds.length % allProducts.length]
+      const campaignKey = `${new Date().toISOString().split('T')[0]}-${user.id.slice(0, 8)}-${submittedCampaignIds.length + 1}`
+      
+      campaign = await prisma.campaign.create({
+        data: {
+          productId: nextProduct.id,
+          campaignDate: campaignKey,
+          promoText: `🔥 SPECIAL OFFER TODAY at Trendmark Electronics! 🔥\n\nGet the ${nextProduct.name} for only KSh ${nextProduct.price.toLocaleString()}!\n✅ ${nextProduct.description}\n\nOrder via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0734570672`,
+          status: 'ACTIVE',
+        },
+        include: { product: true },
+      })
+    }
   }
 
   if (!campaign) {
     return (
       <div className="max-w-xl mx-auto py-16 px-4 text-center">
         <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4">
-          <h1 className="text-xl font-black text-slate-900">No Active Campaign Today</h1>
+          <h1 className="text-xl font-black text-slate-900">No Active Campaign Available</h1>
           <p className="text-xs text-slate-500">Check back shortly. An admin will post today's featured electronics product.</p>
         </div>
       </div>
     )
   }
 
-  // Check if user already submitted proof for this campaign
+  // Check if current campaign was already submitted (should be false since we selected unsubmitted)
   const existingSubmission = await prisma.submission.findFirst({
     where: {
       userId: user.id,

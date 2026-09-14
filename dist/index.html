@@ -39,11 +39,12 @@
   <div class="fixed top-[-10%] left-[20%] w-[500px] h-[500px] bg-sky-600/20 rounded-full blur-[140px] pointer-events-none z-0"></div>
   <div class="fixed top-[40%] right-[10%] w-[450px] h-[450px] bg-emerald-600/15 rounded-full blur-[130px] pointer-events-none z-0"></div>
 
-  <!-- GLASSMORPHISM NAVBAR -->
+  <!-- GLASSMORPHISM NAVBAR WITH PROFESSIONAL DROPDOWN -->
   <header class="sticky top-0 z-50 glass-panel border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="switchTab('home')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_20px_rgba(56,189,248,0.4)] group-hover:scale-105 transition-transform">
           T
         </div>
         <div>
@@ -52,33 +53,102 @@
         </div>
       </div>
 
-        <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="hidden text-sky-400 font-extrabold flex items-center gap-1.5 py-1 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 hover:bg-sky-500/20 transition">
-          <i class="fa-solid fa-user-check text-sky-400"></i> My Promoter Account
-        </button>
-        <button onclick="switchTab('home')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+        <button onclick="switchTab('home')" class="hover:text-sky-400 flex items-center gap-1.5 py-1.5 transition text-xs font-bold text-slate-200">
           <i class="fa-solid fa-house text-sky-400"></i> Home
         </button>
-        <button onclick="switchTab('packages')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
+
+        <button onclick="switchTab('packages')" class="hover:text-amber-400 flex items-center gap-1.5 py-1.5 transition text-xs font-bold text-slate-200">
           <i class="fa-solid fa-award text-amber-400"></i> Packages
         </button>
-        <button onclick="switchTab('campaign')" class="text-emerald-400 font-extrabold flex items-center gap-1.5 py-1 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-          <i class="fa-solid fa-lock text-amber-400" id="nav-lock-icon"></i> Today's Campaign
+
+        <!-- PROMOTER HUB DROPDOWN MENU -->
+        <div class="relative group">
+          <button class="hover:text-sky-400 flex items-center gap-1.5 py-1.5 transition text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-layer-group text-sky-400"></i>
+            Promoter Hub
+            <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 group-hover:rotate-180 transition-transform duration-200"></i>
+          </button>
+
+          <!-- Dropdown Card -->
+          <div class="absolute left-0 mt-2 w-72 glass-panel rounded-2xl p-2 shadow-2xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-left group-hover:scale-100 scale-95">
+            <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
+              <span class="text-[10px] uppercase font-black text-sky-400 tracking-wider">Promoter Services</span>
+              <span class="bg-emerald-500/20 text-emerald-300 text-[9px] px-2 py-0.5 rounded-full font-bold">24h Auto-Rotate</span>
+            </div>
+            
+            <div class="py-1 space-y-1">
+              <button onclick="switchTab('campaign')" class="w-full text-left flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 transition text-xs text-white">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                  <div class="font-bold flex items-center gap-1.5">Today's Ad <span class="bg-emerald-500/30 text-emerald-300 text-[9px] px-1.5 py-0.2 rounded font-mono">24h Active</span></div>
+                  <div class="text-[10px] text-slate-400">Copy WhatsApp ad copy & image</div>
+                </div>
+              </button>
+
+              <button onclick="switchTab('submit-proof')" class="w-full text-left flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 transition text-xs text-white">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <div>
+                  <div class="font-bold">Submit Views Proof</div>
+                  <div class="text-[10px] text-slate-400">OCR scanner & reward calculator</div>
+                </div>
+              </button>
+
+              <button onclick="switchTab('dashboard')" class="w-full text-left flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 transition text-xs text-white">
+                <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                  <div class="font-bold">Promoter Dashboard</div>
+                  <div class="text-[10px] text-slate-400">Account status, queue & payouts</div>
+                </div>
+              </button>
+
+              <button onclick="switchTab('packages')" class="w-full text-left flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 transition text-xs text-white">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 text-sm">
+                  <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                  <div class="font-bold">Upgrade Package</div>
+                  <div class="text-[10px] text-slate-400">Earn up to KSh 3.50 per view</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="switchTab('wallet')" class="hover:text-emerald-400 flex items-center gap-1.5 py-1.5 transition text-xs font-bold text-slate-200">
+          <i class="fa-solid fa-wallet text-emerald-400"></i> My Wallet
         </button>
-        <button onclick="switchTab('wallet')" class="hover:text-sky-400 flex items-center gap-1.5 py-1 transition">
-          <i class="fa-solid fa-wallet text-indigo-400"></i> My Wallet
-        </button>
-        <a href="admin.html" id="nav-btn-admin-portal" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black px-3.5 py-1 rounded-full text-xs flex items-center gap-1.5 shadow transition hover:scale-105"><i class="fa-solid fa-shield-halved"></i> Central Admin Portal</a>
-        <button onclick="switchTab('submit-proof')" id="nav-btn-submit-proof" class="hidden text-amber-300 font-extrabold flex items-center gap-1.5 py-1 bg-amber-500/10 px-3 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition">
-          <i class="fa-solid fa-camera-retro"></i> Submit Proof
-        </button>
+
+        <a href="admin.html" id="nav-btn-admin-portal" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow transition hover:scale-105">
+          <i class="fa-solid fa-shield-halved"></i> Central Admin
+        </a>
       </nav>
 
-      <div class="flex items-center gap-2" id="navbar-auth-section">
-        <span id="account-status-badge" class="text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer" onclick="switchTab('packages')">
+      <!-- Auth Controls & User Profile Dropdown -->
+      <div class="flex items-center gap-3">
+        <span id="account-status-badge" class="hidden sm:flex text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 items-center gap-1.5 cursor-pointer" onclick="switchTab('packages')">
           <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Account Inactive
         </span>
+
         <div id="nav-user-controls" class="flex items-center gap-2"></div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition">
+          <i class="fa-solid fa-bars text-lg" id="mobile-menu-icon"></i>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-white/10 bg-slate-950/95 backdrop-blur-2xl px-4 py-4 space-y-3">
+      <!-- Mobile links populated dynamically -->
     </div>
   </header>
 
@@ -618,50 +688,86 @@
         <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-4 shadow-xl">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
             <div>
-              <span class="text-[10px] uppercase font-bold text-sky-300 bg-sky-500/20 px-3 py-1 rounded-full border border-sky-500/30">
-                🔥 Today's Active Campaign
-              </span>
-              <h1 class="text-2xl sm:text-3xl font-black mt-2 text-white">Trendmark Ultra Smart Watch v2</h1>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] uppercase font-bold text-sky-300 bg-sky-500/20 px-3 py-1 rounded-full border border-sky-500/30 flex items-center gap-1.5">
+                  <i class="fa-solid fa-fire text-amber-400"></i> Active Assigned Campaign
+                </span>
+                <span id="campaign-rotation-badge" class="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                  <i class="fa-solid fa-clock-rotate-left"></i> 24h Auto-Rotation
+                </span>
+              </div>
+              <h1 id="campaign-title-heading" class="text-2xl sm:text-3xl font-black mt-2 text-white">Trendmark Ultra Smart Watch v2</h1>
             </div>
-            <div class="bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300">
-              Date: 2026-09-09
+            <div class="flex items-center gap-2">
+              <div class="bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-hourglass-half text-amber-400"></i>
+                <span id="campaign-timer-text">Rotates in 24 hrs</span>
+              </div>
+              <button onclick="handleManualRotate()" title="Get a different product" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-sky-300 font-bold text-xs rounded-xl border border-white/10 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-rotate"></i> Switch Product
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-r from-sky-500/10 via-emerald-500/10 to-indigo-500/10 border border-sky-500/20 rounded-2xl p-3.5 flex items-center gap-3 text-xs text-sky-200">
+            <i class="fa-solid fa-circle-info text-sky-400 text-lg shrink-0"></i>
+            <div>
+              <strong>24-Hour & Proof Rotation Rule:</strong> Share this product to your WhatsApp Status. Once you submit your screenshot views proof, the system <strong>automatically generates a brand-new product</strong> for your next campaign!
             </div>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
           <div class="md:col-span-5 glass-card rounded-3xl p-5 space-y-4 shadow-xl">
-            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="h-56 w-full object-cover rounded-2xl">
-            <h3 class="font-extrabold text-white text-lg">Trendmark Ultra Smart Watch v2</h3>
-            <span class="inline-block bg-white/5 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded border border-white/10">Retail Price: KSh 3,500</span>
+            <div class="relative overflow-hidden rounded-2xl bg-slate-900 aspect-square">
+              <img id="campaign-product-img" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="h-full w-full object-cover rounded-2xl transition hover:scale-105 duration-300">
+              <span id="campaign-product-category" class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md text-sky-300 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg border border-white/10">Smartwatches</span>
+            </div>
+            <h3 id="campaign-product-title" class="font-extrabold text-white text-lg">Trendmark Ultra Smart Watch v2</h3>
+            <div class="flex items-center justify-between">
+              <span id="campaign-product-price" class="inline-block bg-white/5 text-emerald-400 text-xs font-black px-3 py-1 rounded-xl border border-white/10">Retail Price: KSh 3,500</span>
+              <span class="text-[10px] text-slate-400">Verified Authentic</span>
+            </div>
+            <p id="campaign-product-desc" class="text-xs text-slate-400 leading-relaxed">Original Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.</p>
           </div>
 
           <div class="md:col-span-7 glass-card rounded-3xl p-6 space-y-6 shadow-xl">
             <div class="space-y-2">
-              <h3 class="font-extrabold text-white text-base">Shareable WhatsApp Ad Copy</h3>
-              <p class="text-xs text-slate-400">Copy the promotional text below and post it to your WhatsApp Status alongside the image.</p>
+              <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-white text-base flex items-center gap-2">
+                  <i class="fa-solid fa-bullhorn text-sky-400"></i> Shareable WhatsApp Status Ad Copy
+                </h3>
+                <span class="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 font-bold">Ready to Post</span>
+              </div>
+              <p class="text-xs text-slate-400">Copy this promotional text, download or screenshot the product image, and post to your WhatsApp Status.</p>
             </div>
 
-            <div class="bg-slate-950 border border-white/10 p-4 rounded-2xl text-xs space-y-3">
-              <p id="ad-text" class="whitespace-pre-line font-medium text-slate-200">
-🔥 SPECIAL OFFER TODAY at Trendmark Electronics! 🔥
-
-Get the Trendmark Ultra Smart Watch v2 for only KSh 3,500!
-✅ 1.96" AMOLED HD Screen
-✅ Bluetooth Phone Calls
-✅ 10 Days Battery Life
-
-Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
-              </p>
-              <div class="pt-2 border-t border-white/10 flex justify-end">
-                <button onclick="copyAdText()" class="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs rounded-xl shadow">
+            <div class="bg-slate-950 border border-white/10 p-4 rounded-2xl text-xs space-y-3 relative group">
+              <p id="ad-text" class="whitespace-pre-line font-medium text-slate-200 leading-relaxed">🔥 FLASH SALE: Trendmark Ultra Smart Watch v2!
+Original Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.
+Special Offer: KSh 3,500 only! Free delivery in Nairobi.
+Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
+              <div class="pt-3 border-t border-white/10 flex justify-between items-center">
+                <span class="text-[10px] text-slate-500">M-Pesa Orders directed to 0734570672</span>
+                <button onclick="copyAdText()" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center gap-2">
                   <i class="fa-solid fa-copy"></i> Copy Ad Text
                 </button>
               </div>
             </div>
 
-            <button onclick="switchTab('submit-proof')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl text-xs shadow-lg">
-              Submit WhatsApp Screenshot Proof →
+            <div class="bg-white/5 border border-white/10 p-4 rounded-2xl space-y-2 text-xs">
+              <h4 class="font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-400"></i> 3 Easy Steps to Earn:
+              </h4>
+              <ol class="list-decimal list-inside space-y-1 text-slate-400 text-[11px]">
+                <li>Copy the ad text above & save the product image to your phone.</li>
+                <li>Post to your WhatsApp Status and let friends and contacts view it.</li>
+                <li>Screenshot the view count after 24h & submit below for your reward!</li>
+              </ol>
+            </div>
+
+            <button onclick="switchTab('submit-proof')" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-2xl text-sm shadow-xl shadow-emerald-500/20 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-camera-retro"></i> Submit WhatsApp Screenshot Proof Now →
             </button>
           </div>
         </div>
@@ -764,47 +870,84 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
     <!-- CLIENT / USER DASHBOARD TAB -->
     <section id="tab-dashboard" class="hidden space-y-8 max-w-5xl mx-auto">
       <!-- Client Header Banner -->
-      <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl relative overflow-hidden border border-white/10">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">Client Dashboard</span>
-              <span id="client-dash-status" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">🟢 Active</span>
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden border border-white/10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-5">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-[0_0_25px_rgba(56,189,248,0.4)]">
+              <span id="client-avatar-letter">U</span>
             </div>
-            <h2 id="client-dash-name" class="text-2xl sm:text-3xl font-black text-white mt-1">Welcome Back!</h2>
-            <p id="client-dash-phone" class="text-xs text-slate-400 font-mono">M-Pesa Payout Line: 07XXXXXXXX</p>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">Promoter Hub</span>
+                <span id="client-dash-status" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full">🟢 Active Account</span>
+              </div>
+              <h2 id="client-dash-name" class="text-2xl sm:text-3xl font-black text-white mt-1">Welcome Back!</h2>
+              <p id="client-dash-phone" class="text-xs text-slate-400 font-mono">M-Pesa Line: 07XXXXXXXX</p>
+            </div>
           </div>
-          <div class="flex gap-2 flex-wrap">
-            <button onclick="switchTab('campaign')" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black rounded-xl text-xs shadow transition flex items-center gap-1.5">
+
+          <div class="flex gap-2 flex-wrap w-full sm:w-auto">
+            <button onclick="switchTab('campaign')" class="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-bullhorn"></i> Today's Ad
             </button>
-            <button onclick="switchTab('submit-proof')" class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl text-xs border border-amber-500/30 transition flex items-center gap-1.5">
+            <button onclick="switchTab('submit-proof')" class="flex-1 sm:flex-none px-4 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl text-xs border border-amber-500/30 transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-camera-retro"></i> Submit Proof
             </button>
-            <button onclick="openWithdrawModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs border border-white/10 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Withdraw
+            <button onclick="openWithdrawModal()" class="flex-1 sm:flex-none px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs border border-white/10 transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-money-bill-transfer text-emerald-400"></i> Cashout
+            </button>
+          </div>
+        </div>
+
+        <!-- 24-HOUR ROTATING ACTIVE PRODUCT SPOTLIGHT CARD -->
+        <div class="bg-gradient-to-r from-slate-900/90 to-sky-950/60 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+          <div class="flex items-center gap-4">
+            <img id="dash-spotlight-img" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800" class="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[9px] uppercase font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <i class="fa-solid fa-arrows-rotate text-emerald-400"></i> Currently Assigned Product
+                </span>
+                <span id="dash-spotlight-timer" class="text-[9px] font-bold text-sky-300 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">
+                  Rotates in 24 hrs
+                </span>
+              </div>
+              <h4 id="dash-spotlight-title" class="font-extrabold text-white text-base">Trendmark Ultra Smart Watch v2</h4>
+              <p class="text-[11px] text-slate-400">
+                Price: <span id="dash-spotlight-price" class="text-emerald-400 font-bold">KSh 3,500</span> &bull; 
+                <span class="text-slate-300">Submit views screenshot to earn & generate a new product!</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button onclick="switchTab('campaign')" class="px-3.5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-copy"></i> View Ad Text
+            </button>
+            <button onclick="switchTab('submit-proof')" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-upload"></i> Submit Proof
             </button>
           </div>
         </div>
 
         <!-- Personal Account Metrics Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="glass-card p-4 rounded-2xl space-y-1">
+          <div class="glass-card p-4 rounded-2xl space-y-1 border border-white/5">
             <p class="text-[10px] text-slate-400 font-extrabold uppercase">My Package</p>
             <p id="client-dash-pkg" class="text-lg font-black text-amber-300">Silver Package</p>
             <p id="client-dash-rate" class="text-[11px] text-slate-300 font-bold">KSh 2.00 / view</p>
           </div>
-          <div class="glass-card p-4 rounded-2xl space-y-1">
+          <div class="glass-card p-4 rounded-2xl space-y-1 border border-white/5">
             <p class="text-[10px] text-slate-400 font-extrabold uppercase">Wallet Balance</p>
             <p id="client-dash-balance" class="text-xl font-black text-emerald-400">KSh 0.00</p>
             <p class="text-[10px] text-emerald-300 font-bold">Available M-Pesa</p>
           </div>
-          <div class="glass-card p-4 rounded-2xl space-y-1">
+          <div class="glass-card p-4 rounded-2xl space-y-1 border border-white/5">
             <p class="text-[10px] text-slate-400 font-extrabold uppercase">Approved Views</p>
             <p id="client-dash-views" class="text-xl font-black text-sky-400">0 Views</p>
             <p class="text-[10px] text-slate-400 font-bold">Verified Screenshots</p>
           </div>
-          <div class="glass-card p-4 rounded-2xl space-y-1">
+          <div class="glass-card p-4 rounded-2xl space-y-1 border border-white/5">
             <p class="text-[10px] text-slate-400 font-extrabold uppercase">Total Earned</p>
             <p id="client-dash-earned" class="text-xl font-black text-emerald-300">KSh 0.00</p>
             <p class="text-[10px] text-slate-400 font-bold">Lifetime Rewards</p>
@@ -964,14 +1107,63 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
     let currentSelectedPackage = { title: 'Bronze Package', price: 300, rate: 1.0 };
     let currentProofImageBase64 = null;
 
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      if (!drawer) return;
+      drawer.classList.toggle('hidden');
+    }
+
+    function handleManualRotate() {
+      const user = TrendmarkDB.getCurrentUser();
+      if (!user) return;
+      const res = TrendmarkDB.rotateUserCampaignNow(user.phone);
+      if (res && res.product) {
+        alert(`🎉 New product generated!\nYou are now advertising: ${res.product.title}\nRetail: KSh ${res.product.price}`);
+        renderActiveCampaign(user);
+        renderClientDashboard(user);
+      }
+    }
+
+    function renderActiveCampaign(user) {
+      const campaignInfo = TrendmarkDB.getUserActiveCampaign(user ? user.phone : null);
+      const product = campaignInfo.product;
+      if (!product) return;
+
+      const imgEl = document.getElementById('campaign-product-img');
+      const titleHeading = document.getElementById('campaign-title-heading');
+      const productTitle = document.getElementById('campaign-product-title');
+      const priceEl = document.getElementById('campaign-product-price');
+      const descEl = document.getElementById('campaign-product-desc');
+      const catEl = document.getElementById('campaign-product-category');
+      const adTextEl = document.getElementById('ad-text');
+      const timerEl = document.getElementById('campaign-timer-text');
+
+      if (imgEl) imgEl.src = product.image;
+      if (titleHeading) titleHeading.innerText = product.title;
+      if (productTitle) productTitle.innerText = product.title;
+      if (priceEl) priceEl.innerText = `Retail Price: KSh ${product.price.toLocaleString()}`;
+      if (descEl) descEl.innerText = product.description;
+      if (catEl) catEl.innerText = product.category || 'Electronics';
+      if (adTextEl) adTextEl.innerText = product.copy;
+      if (timerEl) timerEl.innerText = `Rotates in ${campaignInfo.hoursRemaining || 24} hrs`;
+
+      // Also update dashboard spotlight card
+      const dashImg = document.getElementById('dash-spotlight-img');
+      const dashTitle = document.getElementById('dash-spotlight-title');
+      const dashPrice = document.getElementById('dash-spotlight-price');
+      const dashTimer = document.getElementById('dash-spotlight-timer');
+      if (dashImg) dashImg.src = product.image;
+      if (dashTitle) dashTitle.innerText = product.title;
+      if (dashPrice) dashPrice.innerText = `KSh ${product.price.toLocaleString()}`;
+      if (dashTimer) dashTimer.innerText = `Rotates in ${campaignInfo.hoursRemaining || 24} hrs`;
+    }
+
     function renderUserState() {
       const user = TrendmarkDB.getCurrentUser();
       const userControls = document.getElementById('nav-user-controls');
       const statusBadge = document.getElementById('account-status-badge');
-      const navLockIcon = document.getElementById('nav-lock-icon');
-      const navDashBtn = document.getElementById('nav-btn-dashboard');
-      const navSubmitBtn = document.getElementById('nav-btn-submit-proof');
       const navAdminPortalBtn = document.getElementById('nav-btn-admin-portal');
+      const mobileDrawer = document.getElementById('mobile-nav-drawer');
 
       const productsLockedBanner = document.getElementById('products-locked-banner');
       const productsUnlockedGrid = document.getElementById('products-unlocked-grid');
@@ -980,12 +1172,12 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
 
       if (!user) {
         // GUEST STATE
-        if (navDashBtn) navDashBtn.classList.add('hidden');
-        if (navSubmitBtn) navSubmitBtn.classList.add('hidden');
         if (navAdminPortalBtn) navAdminPortalBtn.classList.add('hidden');
-        statusBadge.className = "text-xs bg-white/5 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl font-bold border border-white/10 flex items-center gap-1.5 cursor-pointer";
-        statusBadge.innerHTML = `<i class="fa-solid fa-user-lock text-amber-400"></i> Guest Mode`;
-        statusBadge.onclick = () => openAuthModal('login');
+        if (statusBadge) {
+          statusBadge.className = "text-xs bg-white/5 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl font-bold border border-white/10 flex items-center gap-1.5 cursor-pointer";
+          statusBadge.innerHTML = `<i class="fa-solid fa-user-lock text-amber-400"></i> Guest Mode`;
+          statusBadge.onclick = () => openAuthModal('login');
+        }
 
         userControls.innerHTML = `
           <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white font-extrabold rounded-xl text-xs border border-white/10 transition">
@@ -996,7 +1188,25 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
           </button>
         `;
 
-        if (navLockIcon) navLockIcon.className = "fa-solid fa-lock text-amber-400";
+        if (mobileDrawer) {
+          mobileDrawer.innerHTML = `
+            <div class="space-y-2 text-xs">
+              <button onclick="switchTab('home'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-house text-sky-400"></i> Home
+              </button>
+              <button onclick="switchTab('packages'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-400"></i> Packages
+              </button>
+              <button onclick="openAuthModal('login'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-right-to-bracket text-sky-400"></i> Sign In
+              </button>
+              <button onclick="openAuthModal('register'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl bg-emerald-500 text-slate-950 font-black flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i> Register
+              </button>
+            </div>
+          `;
+        }
+
         if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
         if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
         if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
@@ -1004,48 +1214,41 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
 
       } else {
         // LOGGED IN USER STATE
-        if (navDashBtn) navDashBtn.classList.remove('hidden');
-
         const isUserActive = (user.status === 'ACTIVE');
         const isUserPending = (user.status === 'PENDING');
+        const isMasterAdmin = (user.phone === '0734570672');
 
-        if (isUserActive) {
-          statusBadge.className = "text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl font-bold border border-emerald-500/30 flex items-center gap-1.5";
-          statusBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${user.package || 'Active'} 🟢`;
-          statusBadge.onclick = () => switchTab('dashboard');
+        if (statusBadge) {
+          if (isUserActive) {
+            statusBadge.className = "text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-xl font-bold border border-emerald-500/30 flex items-center gap-1.5 cursor-pointer";
+            statusBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${user.package || 'Active'} 🟢`;
+            statusBadge.onclick = () => switchTab('dashboard');
 
-          if (navLockIcon) navLockIcon.className = "fa-solid fa-fire text-amber-400";
-          if (productsLockedBanner) productsLockedBanner.classList.add('hidden');
-          if (productsUnlockedGrid) productsUnlockedGrid.classList.remove('hidden');
-          if (campaignLockedBanner) campaignLockedBanner.classList.add('hidden');
-          if (campaignUnlockedContent) campaignUnlockedContent.classList.remove('hidden');
-          if (navSubmitBtn) navSubmitBtn.classList.remove('hidden'); // Show for active users
-        } else if (isUserPending) {
-          statusBadge.className = "text-xs bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5";
-          statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Verification Pending`;
-          statusBadge.onclick = () => alert('Your M-Pesa payment proof is currently under review by our admin team.');
+            if (productsLockedBanner) productsLockedBanner.classList.add('hidden');
+            if (productsUnlockedGrid) productsUnlockedGrid.classList.remove('hidden');
+            if (campaignLockedBanner) campaignLockedBanner.classList.add('hidden');
+            if (campaignUnlockedContent) campaignUnlockedContent.classList.remove('hidden');
+          } else if (isUserPending) {
+            statusBadge.className = "text-xs bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer";
+            statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span> Verification Pending`;
+            statusBadge.onclick = () => alert('Your M-Pesa payment proof is currently under review by our admin team.');
 
-          if (navLockIcon) navLockIcon.className = "fa-solid fa-clock text-amber-400";
-          if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
-          if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
-          if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
-          if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
-          if (navSubmitBtn) navSubmitBtn.classList.add('hidden'); // Hide for pending
-        } else {
-          // INACTIVE
-          statusBadge.className = "text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer";
-          statusBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Inactive &bull; Activate`;
-          statusBadge.onclick = () => switchTab('packages');
+            if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
+            if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
+            if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
+            if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
+          } else {
+            statusBadge.className = "text-xs bg-amber-500/10 text-amber-300 px-3 py-1.5 rounded-xl font-bold border border-amber-500/30 flex items-center gap-1.5 cursor-pointer";
+            statusBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Inactive &bull; Activate`;
+            statusBadge.onclick = () => switchTab('packages');
 
-          if (navLockIcon) navLockIcon.className = "fa-solid fa-lock text-amber-400";
-          if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
-          if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
-          if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
-          if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
-          if (navSubmitBtn) navSubmitBtn.classList.add('hidden'); // Hide for inactive
+            if (productsLockedBanner) productsLockedBanner.classList.remove('hidden');
+            if (productsUnlockedGrid) productsUnlockedGrid.classList.add('hidden');
+            if (campaignLockedBanner) campaignLockedBanner.classList.remove('hidden');
+            if (campaignUnlockedContent) campaignUnlockedContent.classList.add('hidden');
+          }
         }
 
-        const isMasterAdmin = (user.phone === '0734570672');
         if (navAdminPortalBtn) {
           if (isMasterAdmin) {
             navAdminPortalBtn.classList.remove('hidden');
@@ -1054,22 +1257,117 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
           }
         }
 
+        // PROFESSIONAL USER DROPDOWN MENU
+        const initials = user.name ? user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : 'U';
+        const firstName = user.name ? user.name.split(' ')[0] : 'Promoter';
+
         userControls.innerHTML = `
-          ${isMasterAdmin ? `
-            <a href="admin.html" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded-xl text-xs font-black shadow transition flex items-center gap-1.5">
-              <i class="fa-solid fa-shield-halved"></i> Admin Portal
-            </a>
-          ` : `
-            <button onclick="switchTab('dashboard')" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-xl text-xs transition">
-              <i class="fa-solid fa-user text-sky-400"></i>
-              <span class="font-extrabold text-white">${user.name.split(' ')[0]}</span>
-              <span class="text-[10px] text-slate-400 font-mono">(${user.phone})</span>
+          <div class="relative group" id="user-profile-dropdown">
+            <button class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 pl-2 pr-3 py-1.5 rounded-2xl text-xs transition">
+              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow">
+                ${initials}
+              </div>
+              <div class="text-left hidden sm:block">
+                <span class="font-black text-white block leading-tight">${firstName}</span>
+                <span class="text-[10px] text-emerald-400 font-bold block leading-tight font-mono">KSh ${(user.walletBalance || 0).toFixed(2)}</span>
+              </div>
+              <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 group-hover:rotate-180 transition-transform duration-200"></i>
             </button>
-          `}
-          <button onclick="handleSignOut()" title="Sign Out" class="p-2 text-slate-400 hover:text-red-400 hover:bg-white/5 rounded-xl text-xs transition">
-            <i class="fa-solid fa-right-from-bracket"></i>
-          </button>
+
+            <!-- Dropdown Card -->
+            <div class="absolute right-0 mt-2 w-72 glass-panel rounded-3xl p-3 shadow-2xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-right group-hover:scale-100 scale-95">
+              <div class="p-3 bg-white/5 rounded-2xl border border-white/10 space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="font-black text-white text-sm">${user.name}</span>
+                  <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${isUserActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">
+                    ${user.package || 'Inactive'}
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-mono">${user.phone}</p>
+                <div class="pt-2 border-t border-white/10 flex justify-between items-center">
+                  <span class="text-[10px] text-slate-400">Available:</span>
+                  <span class="text-xs font-black text-emerald-400 font-mono">KSh ${(user.walletBalance || 0).toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div class="py-2 space-y-1 text-xs">
+                <button onclick="switchTab('dashboard')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-slate-200 hover:text-white flex items-center gap-2.5 transition">
+                  <i class="fa-solid fa-user-check text-sky-400 w-4"></i> My Dashboard
+                </button>
+                <button onclick="switchTab('campaign')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-slate-200 hover:text-white flex items-center gap-2.5 transition">
+                  <i class="fa-solid fa-bullhorn text-emerald-400 w-4"></i> Today's Ad Campaign
+                </button>
+                <button onclick="switchTab('submit-proof')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-slate-200 hover:text-white flex items-center gap-2.5 transition">
+                  <i class="fa-solid fa-camera-retro text-amber-400 w-4"></i> Submit Proof
+                </button>
+                <button onclick="switchTab('wallet')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-slate-200 hover:text-white flex items-center gap-2.5 transition">
+                  <i class="fa-solid fa-wallet text-indigo-400 w-4"></i> My Wallet Ledger
+                </button>
+                <button onclick="openWithdrawModal()" class="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 text-emerald-400 flex items-center gap-2.5 transition font-bold">
+                  <i class="fa-solid fa-money-bill-transfer text-emerald-400 w-4"></i> Withdraw to M-Pesa
+                </button>
+                ${isMasterAdmin ? `
+                  <a href="admin.html" class="w-full text-left px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 flex items-center gap-2.5 transition font-bold">
+                    <i class="fa-solid fa-shield-halved text-amber-400 w-4"></i> Central Admin Portal
+                  </a>
+                ` : ''}
+              </div>
+
+              <div class="pt-2 border-t border-white/10">
+                <button onclick="handleSignOut()" class="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/20 text-red-400 flex items-center gap-2.5 transition text-xs font-bold">
+                  <i class="fa-solid fa-right-from-bracket w-4"></i> Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
         `;
+
+        // Populate Mobile Drawer
+        if (mobileDrawer) {
+          mobileDrawer.innerHTML = `
+            <div class="p-3 bg-white/5 rounded-2xl border border-white/10 space-y-1 mb-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-black text-white">${user.name}</span>
+                <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${isUserActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">
+                  ${user.package || 'Inactive'}
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-400 font-mono">${user.phone}</p>
+              <p class="text-xs font-black text-emerald-400">Balance: KSh ${(user.walletBalance || 0).toFixed(2)}</p>
+            </div>
+            <div class="space-y-1 text-xs">
+              <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-user-check text-sky-400"></i> My Dashboard
+              </button>
+              <button onclick="switchTab('campaign'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2 text-emerald-400">
+                <i class="fa-solid fa-bullhorn"></i> Today's 24h Campaign
+              </button>
+              <button onclick="switchTab('submit-proof'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2 text-amber-400">
+                <i class="fa-solid fa-camera-retro"></i> Submit Screenshot Proof
+              </button>
+              <button onclick="switchTab('packages'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-400"></i> Upgrade Packages
+              </button>
+              <button onclick="switchTab('wallet'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl hover:bg-white/10 font-bold flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-indigo-400"></i> My Wallet
+              </button>
+              <button onclick="openWithdrawModal(); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl bg-emerald-500/20 text-emerald-300 font-black flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-transfer"></i> Cashout to M-Pesa
+              </button>
+              ${isMasterAdmin ? `
+                <a href="admin.html" class="block w-full text-left py-2 px-3 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center gap-2">
+                  <i class="fa-solid fa-shield-halved"></i> Central Admin Portal
+                </a>
+              ` : ''}
+              <button onclick="handleSignOut(); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded-xl text-red-400 font-bold flex items-center gap-2 pt-2 border-t border-white/10">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+              </button>
+            </div>
+          `;
+        }
+
+        // Render Active Campaign with 24h rotating product
+        renderActiveCampaign(user);
 
         // Populate Personal Client Dashboard
         renderClientDashboard(user);
@@ -1094,6 +1392,8 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
       if (!stats) return;
 
       document.getElementById('client-dash-name').innerText = `Welcome Back, ${user.name}!`;
+      const avatarLetter = document.getElementById('client-avatar-letter');
+      if (avatarLetter) avatarLetter.innerText = user.name ? user.name.charAt(0).toUpperCase() : 'U';
       document.getElementById('client-dash-phone').innerText = `M-Pesa Line: ${user.phone}`;
       
       const statusEl = document.getElementById('client-dash-status');
@@ -1346,8 +1646,15 @@ Order via M-Pesa & Get Free Delivery in Nairobi! 📦 Call/WhatsApp: 0700000000
 
       const res = TrendmarkDB.submitProof(user.phone, views, currentProofImageBase64);
       if (res.success) {
-        alert(`Screenshot proof with ${views} views submitted successfully! It is now queued in the Admin Audit Queue.`);
-        switchTab('wallet');
+        const prevTitle = res.previousProduct ? res.previousProduct.title : 'Current Campaign';
+        const nextTitle = res.nextProduct ? res.nextProduct.title : 'Next Featured Product';
+
+        alert(`✅ Screenshot proof with ${views} views submitted for "${prevTitle}"!\n\n🎉 NEW 24H PRODUCT GENERATED:\nYou are now advertising: "${nextTitle}"!\n\nYour campaign has been updated with fresh promotional text and product image. Post it to your WhatsApp status to start earning on the new product!`);
+        
+        renderUserState();
+        switchTab('campaign');
+      } else {
+        alert(res.message || 'Error submitting proof.');
       }
     }
 

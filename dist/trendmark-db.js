@@ -18,7 +18,8 @@
     SUBMISSIONS: 'trendmark_submissions_v1',
     WITHDRAWALS: 'trendmark_withdrawals_v1',
     LEDGER: 'trendmark_ledger_v1',
-    CAMPAIGN: 'trendmark_campaign_v1'
+    CAMPAIGN: 'trendmark_campaign_v1',
+    USER_CAMPAIGNS: 'trendmark_user_campaigns_v2'
   };
 
   const MASTER_ADMIN = {
@@ -31,12 +32,83 @@
     role: 'ADMIN'
   };
 
-  const DEFAULT_CAMPAIGN = {
-    title: 'Trendmark Ultra Smart Watch v2',
-    price: 3500,
-    image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800',
-    copy: '🔥 FLASH SALE: Trendmark Ultra Smart Watch v2!\nOriginal Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.\nSpecial Offer: KSh 3,500 only! Free delivery in Nairobi.\nCall/WhatsApp 0734570672 to order yours today! Limited stock available.'
-  };
+
+  const PRODUCT_CATALOG = [
+    {
+      id: 'prod_1',
+      title: 'Trendmark Ultra Smart Watch v2',
+      price: 3500,
+      image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=800',
+      category: 'Smartwatches',
+      description: 'Original Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.',
+      copy: '🔥 FLASH SALE: Trendmark Ultra Smart Watch v2!\nOriginal Quality AMOLED Display, 7-Day Battery & Heart Rate Tracking.\nSpecial Offer: KSh 3,500 only! Free delivery in Nairobi.\nCall/WhatsApp 0734570672 to order yours today! Limited stock available.'
+    },
+    {
+      id: 'prod_2',
+      title: 'Trendmark Bass Pro Wireless ANC Earbuds',
+      price: 2200,
+      image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=800',
+      category: 'Audio',
+      description: 'Active Noise Cancellation, 36h Battery with Charging Case, Deep Bass Stereo.',
+      copy: '🎵 TRENDMARK BASS PRO EARBUDS!\nActive Noise Cancelling (ANC), Crystal Clear Phone Calls & 36H Playtime.\nSpecial Price: KSh 2,200 only!\nOrder now via Call/WhatsApp 0734570672. Free doorstep delivery!'
+    },
+    {
+      id: 'prod_3',
+      title: 'Trendmark 20,000mAh 22.5W Fast Power Bank',
+      price: 2800,
+      image: 'https://images.unsplash.com/photo-1609592424367-27088b9c2ca2?auto=format&fit=crop&q=80&w=800',
+      category: 'Accessories',
+      description: 'Super-Fast 22.5W charging with LED digital battery display & dual USB-C ports.',
+      copy: '⚡ NEVER RUN OUT OF BATTERY! Trendmark 20,000mAh 22.5W Fast Charging Power Bank.\nLED % display, charges 3 devices simultaneously.\nOnly KSh 2,800! WhatsApp/Call 0734570672 to order today.'
+    },
+    {
+      id: 'prod_4',
+      title: 'Trendmark Studio Pro Wireless Headphones',
+      price: 4500,
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
+      category: 'Audio',
+      description: 'Hi-Fi Over-Ear Studio Sound, 40mm Neodymium Drivers, 50h Wireless Playtime.',
+      copy: '🎧 EXPERIENCE PURE SOUND: Trendmark Studio Pro Wireless Headphones.\nPremium memory foam earcups, 50-Hour battery & immersive Hi-Fi sound.\nOffer Price: KSh 4,500! Call or WhatsApp 0734570672 for quick delivery.'
+    },
+    {
+      id: 'prod_5',
+      title: 'Trendmark 4K Ultra HD Dual-Screen Action Camera',
+      price: 6200,
+      image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&q=80&w=800',
+      category: 'Cameras',
+      description: 'Native 4K 60FPS, 30m Waterproof with casing, EIS Anti-Shake & WiFi app control.',
+      copy: '📷 CAPTURE EVERY ADVENTURE in 4K 60FPS!\nTrendmark Dual-Screen Waterproof Action Camera with stabilization.\nPromo Price: KSh 6,200 only.\nOrder directly via WhatsApp/Call 0734570672 today!'
+    },
+    {
+      id: 'prod_6',
+      title: 'Trendmark 15W MagSafe Wireless Fast Car Mount',
+      price: 1800,
+      image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&q=80&w=800',
+      category: 'Accessories',
+      description: 'Smart auto-clamping, 360° air-vent rotation, high-speed 15W Qi wireless charging.',
+      copy: '🚗 UPGRADE YOUR CAR! Trendmark 15W Fast Wireless Auto-Clamp Car Mount.\nHands-free GPS navigation and ultra-fast wireless charging.\nKSh 1,800 only! WhatsApp/Call 0734570672 to get yours delivered.'
+    },
+    {
+      id: 'prod_7',
+      title: 'Trendmark BoomBox 40W Rugged Party Speaker',
+      price: 4800,
+      image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&q=80&w=800',
+      category: 'Audio',
+      description: '40W stereo drivers, IPX7 waterproof, dynamic RGB beat lighting & TWS pairing.',
+      copy: '🔊 PUMP UP THE BEAT! Trendmark 40W Rugged Waterproof Party Speaker.\nRGB party lights, monstrous bass & 24h battery.\nGet it for KSh 4,800 only! Call/WhatsApp 0734570672 for delivery.'
+    },
+    {
+      id: 'prod_8',
+      title: 'Trendmark Elite Pro Wireless Gaming Controller',
+      price: 3200,
+      image: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&q=80&w=800',
+      category: 'Gaming',
+      description: 'Hall Effect anti-drift joysticks, dual vibration motors, PC/Android/iOS compatible.',
+      copy: '🎮 LEVEL UP YOUR GAMING! Trendmark Elite Pro Multi-Platform Wireless Gamepad.\nZero-drift hall sensors & tactile triggers.\nPrice: KSh 3,200 only! Order via 0734570672 WhatsApp.'
+    }
+  ];
+
+  const DEFAULT_CAMPAIGN = PRODUCT_CATALOG[0];
 
   const DEFAULT_USERS = [
     {
@@ -574,6 +646,10 @@
       const user = this.getUser(phone);
       if (!user) return { success: false, message: 'User not found.' };
 
+      // Get user's active product before submission
+      const activeCampaign = this.getUserActiveCampaign(phone);
+      const currentProduct = activeCampaign.product || PRODUCT_CATALOG[0];
+
       const rate = user.rate || 1.0;
       const reward = views * rate;
       const submissions = this.getAllSubmissions();
@@ -583,17 +659,38 @@
         userId: user.id,
         userName: user.name,
         userPhone: user.phone,
+        productId: currentProduct.id,
+        productTitle: currentProduct.title,
+        productPrice: currentProduct.price,
+        productImage: currentProduct.image,
         package: user.package || 'Bronze Package',
         rate: rate,
         views: views,
         reward: reward,
-        imageUrl: imageUrl || 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=800',
+        imageUrl: imageUrl || currentProduct.image,
         status: 'PENDING',
         submittedAt: 'Today at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       submissions.unshift(newSub);
       setStorage(DB_KEYS.SUBMISSIONS, submissions);
-      return { success: true, submission: newSub };
+
+      // Mark current product campaign as SUBMITTED
+      const userCampaigns = getStorage(DB_KEYS.USER_CAMPAIGNS, {});
+      if (userCampaigns[phone]) {
+        userCampaigns[phone].status = 'SUBMITTED';
+        userCampaigns[phone].lastSubmittedAt = Date.now();
+        setStorage(DB_KEYS.USER_CAMPAIGNS, userCampaigns);
+      }
+
+      // CRITICAL LOGIC: Generate a NEW product different from the one just submitted!
+      const nextCampaign = this.rotateUserCampaignNow(phone);
+
+      return { 
+        success: true, 
+        submission: newSub, 
+        previousProduct: currentProduct,
+        nextProduct: nextCampaign ? nextCampaign.product : null 
+      };
     },
 
     approveSubmission: function (subId) {
@@ -721,7 +818,118 @@
     // ==========================================
     // 8. PROMOTIONAL CAMPAIGN MANAGER
     // ==========================================
-    getCampaign: function () {
+
+    // ==========================================
+    // 8. DYNAMIC 24-HR & POST-SUBMISSION CAMPAIGN ENGINE
+    // ==========================================
+    getProductCatalog: function () {
+      return PRODUCT_CATALOG;
+    },
+
+    getUserActiveCampaign: function (phone) {
+      if (!phone) {
+        return {
+          product: PRODUCT_CATALOG[0],
+          assignedAt: Date.now(),
+          expiresAt: Date.now() + 24 * 3600 * 1000,
+          status: 'ACTIVE',
+          hoursRemaining: 24,
+          isNew: false
+        };
+      }
+
+      const userCampaigns = getStorage(DB_KEYS.USER_CAMPAIGNS, {});
+      let currentAssignment = userCampaigns[phone];
+      const now = Date.now();
+      const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+      let needsNewProduct = false;
+      let lastProductId = null;
+
+      if (!currentAssignment) {
+        needsNewProduct = true;
+      } else {
+        lastProductId = currentAssignment.productId;
+        const isExpired = (now - currentAssignment.assignedAt) >= TWENTY_FOUR_HOURS;
+        const isSubmitted = (currentAssignment.status === 'SUBMITTED');
+        if (isExpired || isSubmitted) {
+          needsNewProduct = true;
+        }
+      }
+
+      if (needsNewProduct) {
+        // Collect IDs of products the user has recently submitted
+        const userSubs = this.getClientSubmissions(phone);
+        const completedProductIds = new Set(userSubs.map(s => s.productId).filter(Boolean));
+        if (lastProductId) completedProductIds.add(lastProductId);
+
+        // Filter for products that are DIFFERENT from lastProductId
+        let available = PRODUCT_CATALOG.filter(p => p.id !== lastProductId && !completedProductIds.has(p.id));
+        if (available.length === 0) {
+          // If all products have been shown, pick any different from the last one
+          available = PRODUCT_CATALOG.filter(p => p.id !== lastProductId);
+        }
+        if (available.length === 0) {
+          available = PRODUCT_CATALOG;
+        }
+
+        const nextProduct = available[Math.floor(Math.random() * available.length)];
+
+        currentAssignment = {
+          userPhone: phone,
+          productId: nextProduct.id,
+          assignedAt: now,
+          expiresAt: now + TWENTY_FOUR_HOURS,
+          status: 'ACTIVE',
+          product: nextProduct
+        };
+
+        userCampaigns[phone] = currentAssignment;
+        setStorage(DB_KEYS.USER_CAMPAIGNS, userCampaigns);
+      } else {
+        if (!currentAssignment.product) {
+          currentAssignment.product = PRODUCT_CATALOG.find(p => p.id === currentAssignment.productId) || PRODUCT_CATALOG[0];
+        }
+      }
+
+      const timeLeftMs = Math.max(0, currentAssignment.expiresAt - now);
+      const hoursRemaining = Math.max(1, Math.ceil(timeLeftMs / (3600 * 1000)));
+
+      return {
+        ...currentAssignment,
+        hoursRemaining: hoursRemaining
+      };
+    },
+
+    rotateUserCampaignNow: function (phone) {
+      if (!phone) return null;
+      const userCampaigns = getStorage(DB_KEYS.USER_CAMPAIGNS, {});
+      const current = userCampaigns[phone];
+      const lastId = current ? current.productId : null;
+
+      // Filter for products different from the last one
+      const candidates = PRODUCT_CATALOG.filter(p => p.id !== lastId);
+      const nextProduct = candidates[Math.floor(Math.random() * candidates.length)] || PRODUCT_CATALOG[0];
+
+      const newAssignment = {
+        userPhone: phone,
+        productId: nextProduct.id,
+        assignedAt: Date.now(),
+        expiresAt: Date.now() + 24 * 3600 * 1000,
+        status: 'ACTIVE',
+        product: nextProduct
+      };
+
+      userCampaigns[phone] = newAssignment;
+      setStorage(DB_KEYS.USER_CAMPAIGNS, userCampaigns);
+      return newAssignment;
+    },
+
+    getCampaign: function (phone) {
+      if (phone) {
+        const active = this.getUserActiveCampaign(phone);
+        return active.product || DEFAULT_CAMPAIGN;
+      }
       return getStorage(DB_KEYS.CAMPAIGN, DEFAULT_CAMPAIGN);
     },
 
