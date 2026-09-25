@@ -576,46 +576,222 @@
     </section>
 
     <!-- PACKAGES TAB -->
+    <!-- PACKAGES SECTION CSS (scoped) -->
+    <style>
+      /* Package card entrance animation */
+      @keyframes pkgSlideUp {
+        from { opacity: 0; transform: translateY(40px) scale(0.96); }
+        to   { opacity: 1; transform: translateY(0)   scale(1); }
+      }
+      @keyframes pkgGlow {
+        0%, 100% { box-shadow: 0 0 0px rgba(16,185,129,0); }
+        50%       { box-shadow: 0 0 40px rgba(16,185,129,0.25), 0 0 80px rgba(16,185,129,0.1); }
+      }
+      @keyframes shimmer {
+        0%   { background-position: -400px 0; }
+        100% { background-position: 400px 0; }
+      }
+      @keyframes floatBadge {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-4px); }
+      }
+      @keyframes priceCount {
+        from { opacity: 0; transform: scale(0.7); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      .pkg-card {
+        opacity: 0;
+        animation: pkgSlideUp 0.55s cubic-bezier(0.34,1.4,0.64,1) forwards;
+      }
+      .pkg-card:nth-child(1) { animation-delay: 0.05s; }
+      .pkg-card:nth-child(2) { animation-delay: 0.18s; }
+      .pkg-card:nth-child(3) { animation-delay: 0.31s; }
+      .pkg-card-popular {
+        animation: pkgSlideUp 0.55s cubic-bezier(0.34,1.4,0.64,1) 0.18s forwards,
+                   pkgGlow 3s ease-in-out 0.8s infinite;
+      }
+      .pkg-badge-popular {
+        animation: floatBadge 2.2s ease-in-out infinite;
+      }
+      .pkg-price {
+        animation: priceCount 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        animation-delay: 0.3s;
+        opacity: 0;
+      }
+      .pkg-btn {
+        position: relative; overflow: hidden;
+        transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                    box-shadow 0.2s ease, background 0.2s ease;
+      }
+      .pkg-btn::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+        background-size: 400px 100%;
+        opacity: 0; transition: opacity 0.2s;
+      }
+      .pkg-btn:hover { transform: translateY(-2px) scale(1.025); }
+      .pkg-btn:hover::after {
+        opacity: 1;
+        animation: shimmer 0.7s ease forwards;
+      }
+      .pkg-btn:active { transform: scale(0.97); }
+      .pkg-feature-check {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 11px; color: #cbd5e1;
+        animation: pkgSlideUp 0.4s ease both;
+      }
+      .pkg-feature-check i { color: #34d399; font-size: 10px; flex-shrink: 0; }
+      .pkg-divider {
+        height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+        margin: 12px 0;
+      }
+      /* Tab enter animation for packages grid */
+      #tab-packages.tab-active .packages-grid {
+        animation: pkgSlideUp 0.4s ease both;
+      }
+    </style>
+
     <section id="tab-packages" class="space-y-8">
-      <div class="text-center space-y-2 max-w-xl mx-auto">
-        <h2 class="text-3xl font-black text-white">Select Reward Package</h2>
-        <p class="text-xs text-slate-400">Select your desired package below to proceed to checkout payment details.</p>
+      <!-- Header -->
+      <div class="text-center space-y-3 max-w-2xl mx-auto">
+        <span class="inline-flex items-center gap-2 bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest">
+          <i class="fa-solid fa-award text-amber-400"></i> Choose Your Earning Tier
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black text-white">Select Reward Package</h2>
+        <p class="text-sm text-slate-400">One-time activation fee. Earn M-Pesa cash every day by sharing product ads on WhatsApp Status.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
-          <h3 class="text-xl font-black text-white">Bronze Package</h3>
-          <div class="text-3xl font-black text-white">KSh 300 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
-          <div class="bg-white/5 text-sky-300 p-3 rounded-2xl text-xs font-bold border border-white/10">
-            Rate: KSh 1.00 per approved view
+      <!-- Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 packages-grid">
+
+        <!-- BRONZE -->
+        <div class="pkg-card glass-card rounded-3xl p-7 space-y-5 shadow-xl border border-sky-500/20 hover:border-sky-400/50 transition-colors duration-300 cursor-pointer group" onclick="openPaymentModal('Bronze Package', 300, 1.0)">
+          <!-- Icon + Title -->
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🥉</div>
+            <div>
+              <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest">Starter Tier</p>
+              <h3 class="text-xl font-black text-white">Bronze Package</h3>
+            </div>
           </div>
-          <button onclick="openPaymentModal('Bronze Package', 300, 1.0)" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
-            Select Bronze Package →
+
+          <!-- Price -->
+          <div class="pkg-price">
+            <div class="text-4xl font-black text-white">KSh 300</div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">One-time activation fee</p>
+          </div>
+
+          <!-- Rate highlight -->
+          <div class="bg-sky-500/10 border border-sky-500/20 rounded-2xl p-3 flex items-center gap-3">
+            <i class="fa-solid fa-coins text-sky-400 text-lg"></i>
+            <div>
+              <p class="text-base font-black text-sky-300">KSh 1.00 <span class="text-xs font-normal text-slate-400">/ approved view</span></p>
+              <p class="text-[10px] text-slate-500">Submit daily screenshots to earn</p>
+            </div>
+          </div>
+
+          <div class="pkg-divider"></div>
+
+          <!-- Features -->
+          <div class="space-y-2">
+            <div class="pkg-feature-check" style="animation-delay:0.2s"><i class="fa-solid fa-circle-check"></i> Access to daily product campaigns</div>
+            <div class="pkg-feature-check" style="animation-delay:0.28s"><i class="fa-solid fa-circle-check"></i> Verified M-Pesa payouts</div>
+            <div class="pkg-feature-check" style="animation-delay:0.36s"><i class="fa-solid fa-circle-check"></i> Referral bonus (KSh 50/friend)</div>
+          </div>
+
+          <button class="pkg-btn w-full py-3.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black rounded-2xl text-sm shadow-[0_4px_20px_rgba(56,189,248,0.3)]">
+            Select Bronze →
           </button>
         </div>
 
-        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-2xl border-2 border-emerald-500/60 relative">
-          <span class="absolute -top-3 right-6 bg-emerald-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase">Most Popular</span>
-          <h3 class="text-xl font-black text-white">Silver Package</h3>
-          <div class="text-3xl font-black text-white">KSh 500 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
-          <div class="bg-white/5 text-emerald-400 p-3 rounded-2xl text-xs font-bold border border-white/10">
-            Rate: KSh 2.00 per approved view
+        <!-- SILVER (popular) -->
+        <div class="pkg-card pkg-card-popular glass-card rounded-3xl p-7 space-y-5 shadow-2xl border-2 border-emerald-500/60 relative hover:border-emerald-400 transition-colors duration-300 cursor-pointer group" onclick="openPaymentModal('Silver Package', 500, 2.0)">
+          <!-- Popular badge -->
+          <span class="pkg-badge-popular absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.5)] whitespace-nowrap">
+            ⭐ Most Popular
+          </span>
+
+          <!-- Icon + Title -->
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🥈</div>
+            <div>
+              <p class="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest">Best Value</p>
+              <h3 class="text-xl font-black text-white">Silver Package</h3>
+            </div>
           </div>
-          <button onclick="openPaymentModal('Silver Package', 500, 2.0)" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs shadow transition">
-            Select Silver Package →
+
+          <!-- Price -->
+          <div class="pkg-price" style="animation-delay:0.38s">
+            <div class="text-4xl font-black text-white">KSh 500</div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">One-time activation fee</p>
+          </div>
+
+          <!-- Rate highlight -->
+          <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3 flex items-center gap-3">
+            <i class="fa-solid fa-coins text-emerald-400 text-lg"></i>
+            <div>
+              <p class="text-base font-black text-emerald-300">KSh 2.00 <span class="text-xs font-normal text-slate-400">/ approved view</span></p>
+              <p class="text-[10px] text-slate-500">2× more than Bronze!</p>
+            </div>
+          </div>
+
+          <div class="pkg-divider"></div>
+
+          <!-- Features -->
+          <div class="space-y-2">
+            <div class="pkg-feature-check" style="animation-delay:0.25s"><i class="fa-solid fa-circle-check"></i> Everything in Bronze</div>
+            <div class="pkg-feature-check" style="animation-delay:0.33s"><i class="fa-solid fa-circle-check"></i> 2× earning rate per view</div>
+            <div class="pkg-feature-check" style="animation-delay:0.41s"><i class="fa-solid fa-circle-check"></i> Priority payment processing</div>
+            <div class="pkg-feature-check" style="animation-delay:0.49s"><i class="fa-solid fa-circle-check"></i> Referral bonus (KSh 50/friend)</div>
+          </div>
+
+          <button class="pkg-btn w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black rounded-2xl text-sm shadow-[0_4px_24px_rgba(16,185,129,0.4)]">
+            Select Silver →
           </button>
         </div>
 
-        <div class="glass-card rounded-3xl p-6 space-y-4 shadow-xl">
-          <h3 class="text-xl font-black text-white">Gold Package</h3>
-          <div class="text-3xl font-black text-white">KSh 1,000 <span class="text-xs font-normal text-slate-400">/ activation</span></div>
-          <div class="bg-white/5 text-amber-300 p-3 rounded-2xl text-xs font-bold border border-white/10">
-            Rate: KSh 3.50 per approved view (VIP)
+        <!-- GOLD -->
+        <div class="pkg-card glass-card rounded-3xl p-7 space-y-5 shadow-xl border border-amber-500/30 hover:border-amber-400/70 transition-colors duration-300 cursor-pointer group" onclick="openPaymentModal('Gold Package', 1000, 3.5)">
+          <!-- Icon + Title -->
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">🥇</div>
+            <div>
+              <p class="text-[10px] text-amber-400 font-extrabold uppercase tracking-widest">VIP Tier</p>
+              <h3 class="text-xl font-black text-white">Gold Package</h3>
+            </div>
           </div>
-          <button onclick="openPaymentModal('Gold Package', 1000, 3.5)" class="w-full py-3 bg-slate-800 hover:bg-sky-500 text-white hover:text-slate-950 font-black rounded-xl text-xs shadow transition">
-            Select Gold Package →
+
+          <!-- Price -->
+          <div class="pkg-price" style="animation-delay:0.52s">
+            <div class="text-4xl font-black text-white">KSh 1,000</div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">One-time activation fee</p>
+          </div>
+
+          <!-- Rate highlight -->
+          <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3 flex items-center gap-3">
+            <i class="fa-solid fa-coins text-amber-400 text-lg"></i>
+            <div>
+              <p class="text-base font-black text-amber-300">KSh 3.50 <span class="text-xs font-normal text-slate-400">/ approved view</span></p>
+              <p class="text-[10px] text-slate-500">Highest earning rate — VIP!</p>
+            </div>
+          </div>
+
+          <div class="pkg-divider"></div>
+
+          <!-- Features -->
+          <div class="space-y-2">
+            <div class="pkg-feature-check" style="animation-delay:0.3s"><i class="fa-solid fa-circle-check"></i> Everything in Silver</div>
+            <div class="pkg-feature-check" style="animation-delay:0.38s"><i class="fa-solid fa-circle-check"></i> 3.5× VIP earning rate</div>
+            <div class="pkg-feature-check" style="animation-delay:0.46s"><i class="fa-solid fa-circle-check"></i> Priority payout queue</div>
+            <div class="pkg-feature-check" style="animation-delay:0.54s"><i class="fa-solid fa-circle-check"></i> Referral bonus (KSh 50/friend)</div>
+            <div class="pkg-feature-check" style="animation-delay:0.62s"><i class="fa-solid fa-star text-amber-400"></i> VIP badge on your profile</div>
+          </div>
+
+          <button class="pkg-btn w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-2xl text-sm shadow-[0_4px_24px_rgba(245,158,11,0.35)]">
+            Select Gold VIP →
           </button>
         </div>
+
       </div>
 
       <!-- PAYMENT INSTRUCTIONS & M-PESA NUMBER 0734570672 (APPEARS ONLY AFTER SELECTING A PACKAGE) -->
@@ -984,6 +1160,57 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
           <!-- Personal withdrawals populated dynamically -->
         </div>
       </div>
+    
+      <!-- ===== REFER & EARN CARD ===== -->
+      <div class="glass-panel rounded-3xl p-6 space-y-5 shadow-2xl border border-teal-500/20" id="referral-card">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <h3 class="font-black text-white text-base flex items-center gap-2">
+            <i class="fa-solid fa-people-arrows text-teal-400"></i> Refer Friends &amp; Earn
+          </h3>
+          <span class="bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[10px] font-extrabold px-3 py-1 rounded-full">
+            <i class="fa-solid fa-coins text-amber-400"></i> KSh 50 per activated friend
+          </span>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="glass-card p-3 rounded-2xl text-center space-y-1">
+            <p class="text-xl font-black text-teal-400" id="ref-count">0</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Friends Referred</p>
+          </div>
+          <div class="glass-card p-3 rounded-2xl text-center space-y-1">
+            <p class="text-xl font-black text-emerald-400" id="ref-activated">0</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Activated</p>
+          </div>
+          <div class="glass-card p-3 rounded-2xl text-center space-y-1">
+            <p class="text-xl font-black text-amber-400" id="ref-bonus">KSh 0</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Bonus Earned</p>
+          </div>
+        </div>
+
+        <!-- Referral Link Box -->
+        <div class="space-y-2">
+          <p class="text-[10px] text-teal-300 font-extrabold uppercase tracking-widest">Your Unique Referral Link</p>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 font-mono text-[11px] text-slate-300 overflow-x-auto whitespace-nowrap" id="referral-link-display">
+              Loading...
+            </div>
+            <button onclick="copyReferralLink()" class="flex-shrink-0 px-3 py-2.5 bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 font-bold rounded-xl text-xs border border-teal-500/30 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-copy"></i> Copy
+            </button>
+          </div>
+          <p id="ref-copy-feedback" class="text-[10px] text-emerald-400 font-bold hidden">&#10003; Link copied to clipboard!</p>
+        </div>
+
+        <!-- WhatsApp Share -->
+        <button onclick="shareReferralOnWhatsApp()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-black rounded-2xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.25)] transition flex items-center justify-center gap-2">
+          <i class="fa-brands fa-whatsapp text-base"></i> Share on WhatsApp &amp; Earn KSh 50
+        </button>
+
+        <p class="text-[10px] text-slate-500 text-center">
+          When your friend registers with your link and activates a package, you automatically earn KSh 50 in your M-Pesa wallet.
+        </p>
+      </div>
     </section>
 
   </main>
@@ -1098,6 +1325,24 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
         if (previewContainer) previewContainer.classList.add('hidden');
         if (ocrStatus) ocrStatus.classList.add('hidden');
         currentProofImageBase64 = null;
+      }
+
+      // Re-trigger package card animations every time packages tab opens
+      if (tabId === 'packages') {
+        setTimeout(() => {
+          document.querySelectorAll('.pkg-card').forEach(card => {
+            card.style.animation = 'none';
+            card.style.opacity = '0';
+            void card.offsetWidth; // force reflow
+            card.style.animation = '';
+          });
+          document.querySelectorAll('.pkg-price').forEach(p => {
+            p.style.animation = 'none';
+            p.style.opacity = '0';
+            void p.offsetWidth;
+            p.style.animation = '';
+          });
+        }, 30);
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1415,6 +1660,10 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
       document.getElementById('client-dash-balance').innerText = `KSh ${(user.walletBalance || 0).toFixed(2)}`;
       document.getElementById('client-dash-views').innerText = `${stats.totalViews} Views`;
       document.getElementById('client-dash-earned').innerText = `KSh ${stats.totalEarned.toFixed(2)}`;
+
+
+      // Render Referral Card
+      renderReferralCard(user);
 
       // Render Personal Submissions
       const subsContainer = document.getElementById('client-submissions-container');
@@ -1748,8 +1997,14 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
       const name = document.getElementById('reg-name').value;
       const phone = document.getElementById('reg-phone').value;
       const pass = document.getElementById('reg-pass').value;
+      const pendingRef = sessionStorage.getItem('trendmark_pending_ref');
       const res = TrendmarkDB.registerUser(name, phone, pass);
       if (res.success) {
+        // Record referral if user came via a referral link
+        if (pendingRef) {
+          TrendmarkDB.recordReferral(phone, pendingRef);
+          sessionStorage.removeItem('trendmark_pending_ref');
+        }
         closeAuthModal();
         renderUserState();
         alert(`Account created successfully! Welcome to Trendmark, ${res.user.name}. Please select a package to activate your account.`);
@@ -1785,6 +2040,68 @@ Call/WhatsApp 0734570672 to order yours today! Limited stock available.</p>
     window.addEventListener('load', () => {
       renderUserState();
     });
+
+    /* ---- REFERRAL SYSTEM ---- */
+    // Parse referral code from URL on page load
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var ref = params.get('ref');
+        if (ref) sessionStorage.setItem('trendmark_pending_ref', ref);
+      } catch(e) {}
+    })();
+
+    function renderReferralCard(user) {
+      if (!user) return;
+      var link = TrendmarkDB.getReferralLink(user.phone);
+      var stats = TrendmarkDB.getReferralStats(user.phone);
+
+      var display = document.getElementById('referral-link-display');
+      if (display && link) display.textContent = link;
+
+      var refCount = document.getElementById('ref-count');
+      var refActivated = document.getElementById('ref-activated');
+      var refBonus = document.getElementById('ref-bonus');
+      if (refCount) refCount.textContent = stats.totalReferred;
+      if (refActivated) refActivated.textContent = stats.bonusPaid;
+      if (refBonus) refBonus.textContent = 'KSh ' + stats.totalEarned.toFixed(2);
+    }
+
+    function copyReferralLink() {
+      var user = TrendmarkDB.getCurrentUser();
+      if (!user) return;
+      var link = TrendmarkDB.getReferralLink(user.phone);
+      if (!link) return;
+      var showFeedback = function() {
+        var fb = document.getElementById('ref-copy-feedback');
+        if (fb) { fb.classList.remove('hidden'); setTimeout(function(){ fb.classList.add('hidden'); }, 3000); }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(showFeedback).catch(function() {
+          var tmp = document.createElement('textarea');
+          tmp.value = link; document.body.appendChild(tmp); tmp.select();
+          document.execCommand('copy'); document.body.removeChild(tmp); showFeedback();
+        });
+      } else {
+        var tmp = document.createElement('textarea');
+        tmp.value = link; document.body.appendChild(tmp); tmp.select();
+        document.execCommand('copy'); document.body.removeChild(tmp); showFeedback();
+      }
+    }
+
+    function shareReferralOnWhatsApp() {
+      var user = TrendmarkDB.getCurrentUser();
+      if (!user) return;
+      var link = TrendmarkDB.getReferralLink(user.phone);
+      var msg = encodeURIComponent(
+        '\uD83D\uDD25 Join me on Trendmark and earn daily M-Pesa cash!\n\n' +
+        'I earn by sharing product ads on WhatsApp Status — verified payouts every day!\n\n' +
+        '\uD83D\uDC47 Register using my referral link:\n' + link + '\n\n' +
+        '\u2705 100% Verified M-Pesa payouts!'
+      );
+      window.open('https://wa.me/?text=' + msg, '_blank');
+    }
+
   </script>
 
   <!-- ================= AUTH MODAL (LOGIN / REGISTER) ================= -->

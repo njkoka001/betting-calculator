@@ -19,7 +19,8 @@
     WITHDRAWALS: 'trendmark_withdrawals_v1',
     LEDGER: 'trendmark_ledger_v1',
     CAMPAIGN: 'trendmark_campaign_v1',
-    USER_CAMPAIGNS: 'trendmark_user_campaigns_v2'
+    USER_CAMPAIGNS: 'trendmark_user_campaigns_v2',
+    REFERRALS: 'trendmark_referrals_v1'
   };
 
   const MASTER_ADMIN = {
@@ -381,15 +382,11 @@
 
     isAdminAuthenticated: function () {
       const session = getStorage(DB_KEYS.ADMIN_SESSION, null);
-      if (!session || session.role !== 'ADMIN') return false;
-
-      // If a client user is active, they can only be admin if phone matches MASTER_ADMIN
-      const clientPhone = localStorage.getItem(DB_KEYS.CLIENT_SESSION);
-      if (clientPhone && clientPhone !== MASTER_ADMIN.phone) {
-        return false;
-      }
-      return true;
+      // Admin auth is completely independent of client sessions.
+      // Only the ADMIN_SESSION credential matters here.
+      return !!(session && session.role === 'ADMIN');
     },
+
 
     getAdminUser: function () {
       if (!this.isAdminAuthenticated()) return null;
@@ -621,10 +618,15 @@
           package: act.package,
           rate: act.rate
         });
+
+        // Credit referral bonus if this user was referred by someone
+        this.creditReferralBonus(act.userPhone);
+
         return true;
       }
       return false;
     },
+
 
     rejectActivation: function (actId) {
       const activations = this.getAllActivations();
@@ -936,6 +938,124 @@
     saveCampaign: function (campaignData) {
       setStorage(DB_KEYS.CAMPAIGN, campaignData);
       return campaignData;
+    },
+
+    // ==========================================
+    // 9. REFERRAL SYSTEM
+    // ==========================================
+
+    /**
+     * Generate a deterministic referral code for a user based on their phone.
+     * Format: REF-<last8digitsOfPhone>
+     */
+    generateReferralCode: function (phone) {
+      if (!phone) return null;
+      const clean = phone.replace(/\D/g, '').slice(-8);
+      return 'REF-' + clean;
+    },
+
+    /**
+     * Get the full shareable referral URL for a user.
+     * Uses the current page origin so it works on any deployment.
+     */
+    getReferralLink: function (phone) {
+      const code = this.generateReferralCode(phone);
+      if (!code) return null;
+      const base = window.location.origin + window.location.pathname.replace(/admin\.html$/, 'index.html');
+      return base + '?ref=' + encodeURIComponent(code);
+    },
+
+    /**
+     * Record a referral when a new user registers via a referral link.
+     * referralCode: the REF-XXXXXXXX code embedded in the URL.
+     */
+    recordReferral: function (newUserPhone, referralCode) {
+      if (!referralCode || !newUserPhone) return false;
+      const referrals = getStorage(DB_KEYS.REFERRALS, []);
+      // Prevent duplicates
+      if (referrals.some(r => r.referredPhone === newUserPhone)) return false;
+
+      // Find the referrer by their code
+      const users = this.getUsers();
+      const referrer = users.find(u => this.generateReferralCode(u.phone) === referralCode);
+      if (!referrer) return false;
+
+      referrals.unshift({
+        id: 'ref_' + Date.now(),
+        referrerPhone: referrer.phone,
+        referrerName: referrer.name,
+        referredPhone: newUserPhone,
+        bonusPaid: false,
+        bonusAmount: 50,
+        createdAt: new Date().toISOString().split('T')[0]
+      });
+      setStorage(DB_KEYS.REFERRALS, referrals);
+      return true;
+    },
+
+    /**
+     * Credit KSh 50 referral bonus to the referrer when the referred user
+     * activates their first package. Called from approveActivation().
+     */
+    creditReferralBonus: function (activatedUserPhone) {
+      const referrals = getStorage(DB_KEYS.REFERRALS, []);
+      const ref = referrals.find(r => r.referredPhone === activatedUserPhone && !r.bonusPaid);
+      if (!ref) return false;
+
+      // Credit referrer wallet
+      const referrer = this.getUser(ref.referrerPhone);
+      if (referrer) {
+        const newBal = (referrer.walletBalance || 0) + ref.bonusAmount;
+        this.updateUser(ref.referrerPhone, { walletBalance: newBal });
+
+        // Ledger entry for referrer
+        const ledger = getStorage(DB_KEYS.LEDGER, []);
+        ledger.unshift({
+          id: 'tx_' + Date.now(),
+          userPhone: ref.referrerPhone,
+          type: 'REFERRAL',
+          description: `Referral Bonus — friend ${activatedUserPhone} activated a package`,
+          amount: ref.bonusAmount,
+          date: 'Today at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        setStorage(DB_KEYS.LEDGER, ledger);
+      }
+
+      // Mark bonus as paid
+      ref.bonusPaid = true;
+      ref.paidAt = new Date().toISOString();
+      setStorage(DB_KEYS.REFERRALS, referrals);
+      return true;
+    },
+
+    /**
+     * Get all users referred by a given phone number.
+     */
+    getUserReferrals: function (phone) {
+      const referrals = getStorage(DB_KEYS.REFERRALS, []);
+      return referrals.filter(r => r.referrerPhone === phone);
+    },
+
+    /**
+     * Get referral stats for a user.
+     */
+    getReferralStats: function (phone) {
+      const refs = this.getUserReferrals(phone);
+      const paid = refs.filter(r => r.bonusPaid);
+      return {
+        totalReferred: refs.length,
+        bonusPaid: paid.length,
+        totalEarned: paid.reduce((acc, r) => acc + (r.bonusAmount || 0), 0),
+        pending: refs.filter(r => !r.bonusPaid).length,
+        referrals: refs
+      };
+    },
+
+    /**
+     * Get all referrals (admin view).
+     */
+    getAllReferrals: function () {
+      return getStorage(DB_KEYS.REFERRALS, []);
     }
   };
 
